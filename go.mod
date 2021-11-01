@@ -1,4 +1,4 @@
-module git.jiaxianghudong.com/ruixue/sdk/ruixuego
+module git.jiaxianghudong.com/ruixuesdk/ruixuego
 
 go 1.17
 
