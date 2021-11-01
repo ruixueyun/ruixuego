@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"git.jiaxianghudong.com/ruixue/sdk/ruixuego"
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
 )
 
 const ciphertext = "x3kcmn9xUXwj3hMzz4O7FFTvlpQTB2rsPXBREal4PpFXvjVU+sRKBUYfPbg3lcIUgidIIZWBYuMmdkwJBtk0BfzLo2aFTaER8e9Bc0bjpIM="

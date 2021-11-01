@@ -3,7 +3,7 @@
 package ruixuego
 
 import (
-	"git.jiaxianghudong.com/ruixue/sdk/ruixuego/bytepool"
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bytepool"
 )
 
 var (
