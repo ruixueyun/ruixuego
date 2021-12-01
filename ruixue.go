@@ -5,6 +5,8 @@ package ruixuego
 
 import "fmt"
 
+const Version = "2.0.0"
+
 var config *Config
 
 // Init 初始化 SDK

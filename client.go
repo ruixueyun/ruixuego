@@ -11,11 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/valyala/fasthttp"
-
 	"git.jiaxianghudong.com/ruixuesdk/ruixuego/httpclient"
 
 	"github.com/google/uuid"
+	"github.com/valyala/fasthttp"
 )
 
 const (
@@ -23,6 +22,7 @@ const (
 	headerCPID      = "ruixue-cpid"
 	headerTimestamp = "ruixue-cpts"
 	headerSign      = "ruixue-cpsign"
+	headerVersion   = "ruixue-version"
 )
 
 const (
@@ -72,6 +72,7 @@ func (c *Client) query(
 	req.Header.Add(headerCPID, cpID)
 	req.Header.Add(headerTimestamp, ts)
 	req.Header.Add(headerSign, c.getSign(traceID, ts))
+	req.Header.Add(headerVersion, Version)
 
 	if arg != nil {
 		b, err := MarshalJSON(arg)
