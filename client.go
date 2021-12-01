@@ -249,7 +249,7 @@ func (c *Client) UpdateFriendRemarks(
 	return nil
 }
 
-// SetCustom 给用户设置社交自定义信息
+// SetCustom 给用户设置社交模块的自定义信息
 func (c *Client) SetCustom(appID, openID, custom string) error {
 	ret := &response{}
 	err := c.query(apiCustom, &argCustom{
