@@ -19,9 +19,12 @@ var (
 
 // OpenIDData OpenID 加密 OpenID 数据定义
 type OpenIDData struct {
+	TraceID   string `json:"traceid"`
 	AppID     string `json:"appid"`
-	Token     string `json:"token"`
+	ChannelID string `json:"channelid"`
+	Method    string `json:"method"`
 	OpenID    string `json:"openid"`
+	Ext       string `json:"ext,omitempty"`
 	Timestamp int64  `json:"ts"`
 }
 
@@ -46,24 +49,30 @@ func DelAESKey(appID string) {
 }
 
 // EncryptOpenIDData 加密 OpenID 数据, 获取密文
-func EncryptOpenIDData(appID, token, openID string) (string, error) {
+func EncryptOpenIDData(
+	traceID, appID, channelID, method, openID, ext string) (string, error) {
+
 	k, ok := appKeys.Load(appID)
 	if !ok {
 		return "", ErrAppKeyNotExistx
 	}
-	return EncryptOpenIDDataWithKey(k.(*AESData), appID, token, openID)
+	return EncryptOpenIDDataWithKey(
+		k.(*AESData), traceID, appID, channelID, method, openID, ext)
 }
 
 // EncryptOpenIDDataWithKey 加密 OpenID 数据, 获取密文
 func EncryptOpenIDDataWithKey(
 	aesData *AESData,
-	appID, token, openID string) (ret string, err error) {
+	traceID, appID, channelID, method, openID, ext string) (ret string, err error) {
 
 	data := poolOpenIDData.Get().(*OpenIDData)
 	defer data.Release()
+	data.TraceID = traceID
 	data.AppID = appID
-	data.Token = token
+	data.ChannelID = channelID
+	data.Method = method
 	data.OpenID = openID
+	data.Ext = ext
 	data.Timestamp = time.Now().UnixMilli()
 	b, err := MarshalJSON(data)
 	if err != nil {

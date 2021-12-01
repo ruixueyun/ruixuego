@@ -11,6 +11,12 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bytepool"
+)
+
+var (
+	bytePools, _ = bytepool.NewMultiRatedBytePool(4, 10, 1024)
 )
 
 // AESData AES 密钥缓存结构
@@ -69,7 +75,7 @@ func AesDecrypt(ciphertext []byte, key *AESData) []byte {
 func AesEncryptWithPool(content []byte, key *AESData) []byte {
 	content = PKCS7Padding(content, key.Block.BlockSize())
 	l := len(content)
-	b := BytePools.Get(l)
+	b := bytePools.Get(l)
 	key.Encrypter().CryptBlocks(b[:l], content)
 	return b[:l]
 }
@@ -77,7 +83,7 @@ func AesEncryptWithPool(content []byte, key *AESData) []byte {
 // AesDecryptWithPool AES-CBC解密
 func AesDecryptWithPool(ciphertext []byte, key *AESData) []byte {
 	l := len(ciphertext)
-	b := BytePools.Get(l)
+	b := bytePools.Get(l)
 	key.Decrypter().CryptBlocks(b[:l], ciphertext)
 	b = PKCS7UnPadding(b[:l])
 	return b
@@ -87,22 +93,22 @@ func AesDecryptWithPool(ciphertext []byte, key *AESData) []byte {
 func AesEncryptBase64String(content string, key *AESData) string {
 	b := AesEncryptWithPool(StringToBytes(content), key)
 	s := base64.StdEncoding.EncodeToString(b)
-	BytePools.Put(b)
+	bytePools.Put(b)
 	return s
 }
 
 // AesDecryptBase64String AES-CBC解密字符串
 func AesDecryptBase64String(content string, key *AESData) string {
 	l := base64.StdEncoding.DecodedLen(len(content))
-	b64 := BytePools.Get(l)
+	b64 := bytePools.Get(l)
 	n, err := base64.StdEncoding.Decode(b64[:l], StringToBytes(content))
 	if err != nil {
 		return ""
 	}
 	b := AesDecryptWithPool(b64[:n], key)
 	s := string(b)
-	BytePools.Put(b)
-	BytePools.Put(b64)
+	bytePools.Put(b)
+	bytePools.Put(b64)
 	return s
 }
 

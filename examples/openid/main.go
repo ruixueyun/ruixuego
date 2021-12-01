@@ -26,5 +26,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("appid: %s, token: %s, openid: %s, ts: %d\n", openIDData.AppID, openIDData.Token, openIDData.OpenID, openIDData.Timestamp)
+	fmt.Printf("appid: %s, token: %s, openid: %s, ts: %d\n", openIDData.AppID, openIDData.OpenID, openIDData.Timestamp)
 }

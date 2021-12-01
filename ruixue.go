@@ -5,9 +5,13 @@ package ruixuego
 
 import "fmt"
 
+var config *Config
+
 // Init 初始化 SDK
 func Init(conf *Config) error {
-	return loadAppKeys(conf.AppKeys)
+	config = conf
+	defaultClient = NewClient()
+	return loadAppKeys(config.AppKeys)
 }
 
 func loadAppKeys(m map[string]string) error {
@@ -19,4 +23,8 @@ func loadAppKeys(m map[string]string) error {
 		}
 	}
 	return nil
+}
+
+func GetDefaultClient() *Client {
+	return defaultClient
 }
