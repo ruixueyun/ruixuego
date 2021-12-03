@@ -16,6 +16,12 @@ type response struct {
 	Data interface{} `json:"data"`
 }
 
+type argCustom struct {
+	AppID  string `json:"appid"`
+	OpenID string `json:"openid"`
+	Custom string `json:"custom"`
+}
+
 type argRelation struct {
 	Types         RelationTypes `json:"types,omitempty"` // map[CP自定类型]是否为双向关系
 	Type          string        `json:"type"`
@@ -25,8 +31,37 @@ type argRelation struct {
 	UserRemarks   string        `json:"user_remarks,omitempty"`
 }
 
-type argCustom struct {
-	AppID  string `json:"appid"`
-	OpenID string `json:"openid"`
-	Custom string `json:"custom"`
+type argLocation struct {
+	OpenID    string   `json:"openid,omitempty"`
+	Type      string   `json:"type,omitempty"`
+	Types     []string `json:"types,omitempty"`
+	Longitude float64  `json:"lon,omitempty"`
+	Latitude  float64  `json:"lat,omitempty"`
+	Radius    float64  `json:"radius,omitempty"`
+	Count     int      `json:"count,omitempty"`
+	Page      int      `json:"page,omitempty"`
+	PageSize  int      `json:"page_size,omitempty"`
+}
+
+type RelationUser struct {
+	OpenID   string  `json:"OpenID,omitempty"`
+	NickName string  `json:"NickName,omitempty"`
+	Birthday string  `json:"Birthday,omitempty"`
+	Remarks  string  `json:"Remarks,omitempty"`
+	Avatar   string  `json:"Avatar,omitempty"`
+	Custom   string  `json:"Custom,omitempty"`
+	Dist     float64 `json:"Dist,omitempty"`
+	Time     int64   `json:"Time,omitempty"`
+	Score    int64   `json:"Score,omitempty"`
+	CPID     uint32  `json:"CPID,omitempty"`
+	Sex      int32   `json:"Sex,omitempty"`
+}
+
+type UserInfo struct {
+	OpenID   string `json:"openid,omitempty"`
+	Nickname string `json:"nickname,omitempty"`
+	Avatar   string `json:"avatar,omitempty"`
+	Region   string `json:"region,omitempty"`
+	Birthday string `json:"birthday,omitempty"`
+	Sex      int8   `json:"sex,omitempty"`
 }

@@ -33,6 +33,20 @@ func main() {
 		panic(err)
 	}
 
+	ret, err := ruixuego.GetDefaultClient().FriendList("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR")
+	if err != nil {
+		panic(err)
+	}
+	for _, ru := range ret {
+		fmt.Printf("%+v\n", ru)
+	}
+
+	yes, err := ruixuego.GetDefaultClient().IsFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(yes)
+
 	// err = ruixuego.GetDefaultClient().DelFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl")
 	// if err != nil {
 	// 	panic(err)

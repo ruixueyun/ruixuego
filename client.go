@@ -26,13 +26,21 @@ const (
 )
 
 const (
+	apiSetUserInfo           = "/Passport/ServerAPI/SetUserInfo"
+	apiSetCustom             = "/Social/ServerAPI/SetCustom"
 	apiAddRelation           = "/Social/ServerAPI/AddRelation"
 	apiDelRelation           = "/Social/ServerAPI/DeleteRelation"
 	apiUpdateRelationRemarks = "/Social/ServerAPI/UpdateRelationRemarks"
+	apiRelationList          = "/Social/ServerAPI/RelationList"
+	apiHasRelation           = "/Social/ServerAPI/HasRelation"
 	apiAddFriend             = "/Social/ServerAPI/AddFriend"
 	apiDelFriend             = "/Social/ServerAPI/DelFriend"
 	apiUpdateFriendRemarks   = "/Social/ServerAPI/UpdateFriendRemarks"
-	apiCustom                = "/Social/ServerAPI/SetCustom"
+	apiFriendList            = "/Social/ServerAPI/FriendList"
+	apiIsFriend              = "/Social/ServerAPI/IsFriend"
+	apiLBSUpdate             = "/Social/ServerAPI/LBSUpdate"
+	apiLBSDelete             = "/Social/ServerAPI/LBSDelete"
+	apiLBSRadius             = "/Social/ServerAPI/LBSRadius"
 )
 
 var defaultClient *Client
@@ -111,6 +119,42 @@ func (c *Client) checkResponse(resp *response) error {
 	return nil
 }
 
+// SetUserInfo 设置用户信息
+func (c *Client) SetUserInfo(openID string, userinfo *UserInfo) error {
+	userinfo.OpenID = openID
+
+	ret := &response{}
+	err := c.query(apiSetUserInfo, userinfo, ret)
+	if err != nil {
+		return err
+	}
+	err = c.checkResponse(ret)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SetCustom 给用户设置社交模块的自定义信息
+func (c *Client) SetCustom(appID, openID, custom string) error {
+	ret := &response{}
+	err := c.query(apiSetCustom, &argCustom{
+		AppID:  appID,
+		OpenID: openID,
+		Custom: custom,
+	}, ret)
+	if err != nil {
+		return err
+	}
+	err = c.checkResponse(ret)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // AddRelation 添加自定义关系
 func (c *Client) AddRelation(
 	types RelationTypes, openID, targetOpenID string, remark ...string) error {
@@ -182,6 +226,43 @@ func (c *Client) UpdateRelationRemarks(
 	return nil
 }
 
+// RelationList 获取自定关系列表
+func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
+	ret := make([]*RelationUser, 0)
+	resp := &response{Data: &ret}
+	err := c.query(apiRelationList, &argRelation{
+		Type:   typ,
+		OpenID: openID,
+	}, resp)
+	if err != nil {
+		return nil, err
+	}
+	err = c.checkResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
+// HasRelation 判断 Target 是否与 User 存在指定关系
+func (c *Client) HasRelation(typ, openID, targetOpenID string) (bool, error) {
+	ret := false
+	resp := &response{Data: &ret}
+	err := c.query(apiHasRelation, &argRelation{
+		Type:   typ,
+		OpenID: openID,
+		Target: targetOpenID,
+	}, resp)
+	if err != nil {
+		return false, err
+	}
+	err = c.checkResponse(resp)
+	if err != nil {
+		return false, err
+	}
+	return ret, nil
+}
+
 // AddFriend 添加好友
 func (c *Client) AddFriend(
 	openID, targetOpenID string, remark ...string) error {
@@ -250,13 +331,50 @@ func (c *Client) UpdateFriendRemarks(
 	return nil
 }
 
-// SetCustom 给用户设置社交模块的自定义信息
-func (c *Client) SetCustom(appID, openID, custom string) error {
-	ret := &response{}
-	err := c.query(apiCustom, &argCustom{
-		AppID:  appID,
+// FriendList 获取好友列表
+func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
+	ret := make([]*RelationUser, 0)
+	resp := &response{Data: &ret}
+	err := c.query(apiFriendList, &argRelation{
 		OpenID: openID,
-		Custom: custom,
+	}, resp)
+	if err != nil {
+		return nil, err
+	}
+	err = c.checkResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
+}
+
+// IsFriend 判断 Target 是否为 User 的好友
+func (c *Client) IsFriend(openID, targetOpenID string) (bool, error) {
+	ret := false
+	resp := &response{Data: &ret}
+	err := c.query(apiIsFriend, &argRelation{
+		OpenID: openID,
+		Target: targetOpenID,
+	}, resp)
+	if err != nil {
+		return false, err
+	}
+	err = c.checkResponse(resp)
+	if err != nil {
+		return false, err
+	}
+	return ret, nil
+}
+
+// LBSUpdate 更新 WGS84 坐标
+// 		types 为 CP	自定义坐标分组, 比如可以同时将用户加入到 all 和 female 两个列表中
+func (c *Client) LBSUpdate(openID string, types []string, lon, lat float64) error {
+	ret := &response{}
+	err := c.query(apiLBSUpdate, &argLocation{
+		OpenID:    openID,
+		Types:     types,
+		Longitude: lon,
+		Latitude:  lat,
 	}, ret)
 	if err != nil {
 		return err
@@ -265,6 +383,54 @@ func (c *Client) SetCustom(appID, openID, custom string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
+}
+
+// LBSDelete 删除 WGS84 坐标
+func (c *Client) LBSDelete(openID string, types []string) error {
+	ret := &response{}
+	err := c.query(apiLBSDelete, &argLocation{
+		OpenID: openID,
+		Types:  types,
+	}, ret)
+	if err != nil {
+		return err
+	}
+	err = c.checkResponse(ret)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// LBSRadius 获取附近的人列表
+func (c *Client) LBSRadius(
+	openID, typ string,
+	lon, lat, radius float64,
+	page, pageSize int,
+	count ...int) ([]*RelationUser, error) {
+
+	ret := make([]*RelationUser, 0)
+	resp := &response{Data: &ret}
+	arg := &argLocation{
+		OpenID:    openID,
+		Type:      typ,
+		Longitude: lon,
+		Latitude:  lat,
+		Radius:    radius,
+		Page:      page,
+		PageSize:  pageSize,
+	}
+	if len(count) == 1 {
+		arg.Count = count[0]
+	}
+	err := c.query(apiLBSRadius, arg, resp)
+	if err != nil {
+		return nil, err
+	}
+	err = c.checkResponse(resp)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
