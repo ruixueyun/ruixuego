@@ -26,7 +26,7 @@ const (
 )
 
 const (
-	apiSetUserInfo           = "/Passport/ServerAPI/SetUserInfo"
+	apiSetUserInfo           = "/Social/ServerAPI/SetUserInfo"
 	apiSetCustom             = "/Social/ServerAPI/SetCustom"
 	apiAddRelation           = "/Social/ServerAPI/AddRelation"
 	apiDelRelation           = "/Social/ServerAPI/DeleteRelation"
