@@ -58,6 +58,7 @@ type RelationUser struct {
 }
 
 type UserInfo struct {
+	AppID    string `json:"appid,omitempty"`
 	OpenID   string `json:"openid,omitempty"`
 	Nickname string `json:"nickname,omitempty"`
 	Avatar   string `json:"avatar,omitempty"`

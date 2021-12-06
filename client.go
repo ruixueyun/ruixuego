@@ -120,7 +120,8 @@ func (c *Client) checkResponse(resp *response) error {
 }
 
 // SetUserInfo 设置用户信息
-func (c *Client) SetUserInfo(openID string, userinfo *UserInfo) error {
+func (c *Client) SetUserInfo(appID, openID string, userinfo *UserInfo) error {
+	userinfo.AppID = appID
 	userinfo.OpenID = openID
 
 	ret := &response{}
