@@ -16,12 +16,12 @@ func main() {
 		panic(err)
 	}
 
-	err = ruixuego.AddAESKey("test", []byte("098f6bcd4621d373cade4e832627b4f6"))
+	err = ruixuego.AddAESKey("test", "test", []byte("098f6bcd4621d373cade4e832627b4f6"))
 	if err != nil {
 		panic(err)
 	}
 
-	openIDData, err := ruixuego.DecryptOpenIDData("test", ciphertext)
+	openIDData, err := ruixuego.DecryptOpenIDData("test", "test", ciphertext)
 	if err != nil {
 		panic(err)
 	}

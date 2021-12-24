@@ -33,26 +33,30 @@ func (data *OpenIDData) Release() {
 	poolOpenIDData.Put(data)
 }
 
+func getKey(appID, channelID string) string {
+	return appID + "_" + channelID
+}
+
 // AddAESKey 添加预置密钥
-func AddAESKey(appID string, key []byte) error {
+func AddAESKey(appID, channelID string, key []byte) error {
 	k, err := NewAESData(key)
 	if err != nil {
 		return err
 	}
-	appKeys.Store(appID, k)
+	appKeys.Store(getKey(appID, channelID), k)
 	return nil
 }
 
 // DelAESKey 删除预置密钥
-func DelAESKey(appID string) {
-	appKeys.Delete(appID)
+func DelAESKey(appID, channelID string) {
+	appKeys.Delete(getKey(appID, channelID))
 }
 
 // EncryptOpenIDData 加密 OpenID 数据, 获取密文
 func EncryptOpenIDData(
 	traceID, appID, channelID, method, openID, ext string) (string, error) {
 
-	k, ok := appKeys.Load(appID)
+	k, ok := appKeys.Load(getKey(appID, channelID))
 	if !ok {
 		return "", ErrAppKeyNotExistx
 	}
@@ -82,8 +86,8 @@ func EncryptOpenIDDataWithKey(
 }
 
 // DecryptOpenIDData 解密 OpenIDData 密文字符串
-func DecryptOpenIDData(appID, openIDCipherText string) (*OpenIDData, error) {
-	k, ok := appKeys.Load(appID)
+func DecryptOpenIDData(appID, channelID, openIDCipherText string) (*OpenIDData, error) {
+	k, ok := appKeys.Load(getKey(appID, channelID))
 	if !ok {
 		return nil, ErrAppKeyNotExistx
 	}

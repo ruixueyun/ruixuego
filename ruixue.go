@@ -16,13 +16,16 @@ func Init(conf *Config) error {
 	return loadAppKeys(config.AppKeys)
 }
 
-func loadAppKeys(m map[string]string) error {
-	for appID, appKey := range m {
-		err := AddAESKey(appID, []byte(appKey))
-		if err != nil {
-			return fmt.Errorf("invalid appkey: %s, appid: %s, error: %s",
-				appKey, appID, err.Error())
+func loadAppKeys(m map[string]map[string]string) error {
+	for appID, channelKeys := range m {
+		for channelID, appKey := range channelKeys {
+			err := AddAESKey(appID, channelID, []byte(appKey))
+			if err != nil {
+				return fmt.Errorf("invalid appkey: %s, appid: %s, channelid: %s, error: %s",
+					appKey, appID, channelID, err.Error())
+			}
 		}
+
 	}
 	return nil
 }
