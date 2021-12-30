@@ -171,8 +171,10 @@ func (c *Client) SetCustom(appID, openID, custom string) error {
 }
 
 // AddRelation 添加自定义关系
+// remarks[0] openID 用户给 targetOpenID 用户设置的备注
+// remarks[1] targetOpenID 用户给 openID 用户设置的备注
 func (c *Client) AddRelation(
-	types RelationTypes, openID, targetOpenID string, remark ...string) error {
+	types RelationTypes, openID, targetOpenID string, remarks ...string) error {
 	if openID == "" || targetOpenID == "" {
 		return ErrInvalidOpenID
 	}
@@ -186,11 +188,11 @@ func (c *Client) AddRelation(
 		OpenID: openID,
 		Target: targetOpenID,
 	}
-	if len(remark) > 0 {
-		arg.TargetRemarks = remark[0]
+	if len(remarks) > 0 {
+		arg.TargetRemarks = remarks[0]
 	}
-	if len(remark) > 1 {
-		arg.TargetRemarks = remark[1]
+	if len(remarks) > 1 {
+		arg.UserRemarks = remarks[1]
 	}
 	err := c.query(apiAddRelation, arg, ret)
 	if err != nil {
@@ -304,8 +306,10 @@ func (c *Client) HasRelation(typ, openID, targetOpenID string) (bool, error) {
 }
 
 // AddFriend 添加好友
+// remarks[0] openID 用户给 targetOpenID 用户设置的备注
+// remarks[1] targetOpenID 用户给 openID 用户设置的备注
 func (c *Client) AddFriend(
-	openID, targetOpenID string, remark ...string) error {
+	openID, targetOpenID string, remarks ...string) error {
 	if openID == "" || targetOpenID == "" {
 		return ErrInvalidOpenID
 	}
@@ -315,11 +319,11 @@ func (c *Client) AddFriend(
 		OpenID: openID,
 		Target: targetOpenID,
 	}
-	if len(remark) > 0 {
-		arg.TargetRemarks = remark[0]
+	if len(remarks) > 0 {
+		arg.TargetRemarks = remarks[0]
 	}
-	if len(remark) > 1 {
-		arg.TargetRemarks = remark[1]
+	if len(remarks) > 1 {
+		arg.UserRemarks = remarks[1]
 	}
 	err := c.query(apiAddFriend, arg, ret)
 	if err != nil {
