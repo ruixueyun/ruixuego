@@ -1,5 +1,5 @@
 // Package httpclient HTTP 客户端
-package httpclient
+package ruixuego
 
 import (
 	"time"
@@ -9,32 +9,21 @@ import (
 
 const defaultContentType = "application/json"
 
-var defaultClient = NewClient()
-
-// DefaultClient return default client
-func DefaultClient() *Client {
-	return defaultClient
-}
-
-// NewClient create http client
-func NewClient(opts ...Option) *Client {
-	options := getDefaultOptions()
-	for _, opt := range opts {
-		opt(options)
-	}
-	return &Client{
-		timeout:     options.Timeout,
-		concurrency: make(chan struct{}, options.Concurrency),
+// NewHTTPClient create http client
+func NewHTTPClient(timeout time.Duration, concurrency int) *HTTPClient {
+	return &HTTPClient{
+		timeout:     timeout,
+		concurrency: make(chan struct{}, concurrency),
 	}
 }
 
-// Client a fasthttp client
-type Client struct {
+// HTTPClient a fasthttp client
+type HTTPClient struct {
 	timeout     time.Duration
 	concurrency chan struct{}
 }
 
-func (c *Client) prepareDo(
+func (c *HTTPClient) prepareDo(
 	url string, req *fasthttp.Request) *fasthttp.Response {
 
 	c.concurrency <- struct{}{}
@@ -42,7 +31,7 @@ func (c *Client) prepareDo(
 	return fasthttp.AcquireResponse()
 }
 
-func (c *Client) getRequestWithArgs(args *fasthttp.Args) *fasthttp.Request {
+func (c *HTTPClient) getRequestWithArgs(args *fasthttp.Args) *fasthttp.Request {
 
 	req := GetRequest()
 	req.SetBody(args.QueryString())
@@ -51,20 +40,20 @@ func (c *Client) getRequestWithArgs(args *fasthttp.Args) *fasthttp.Request {
 	return req
 }
 
-func (c *Client) afterDo(req *fasthttp.Request) {
+func (c *HTTPClient) afterDo(req *fasthttp.Request) {
 
 	fasthttp.ReleaseRequest(req)
 	<-c.concurrency
 }
 
 // Do 发起接口请求
-func (c *Client) Do(url string, args *fasthttp.Args) (*fasthttp.Response, error) {
+func (c *HTTPClient) Do(url string, args *fasthttp.Args) (*fasthttp.Response, error) {
 
 	return c.DoWithTimeout(url, args, c.timeout)
 }
 
 // DoWithTimeout 发起一个带有超时时间的请求
-func (c *Client) DoWithTimeout(
+func (c *HTTPClient) DoWithTimeout(
 	url string,
 	args *fasthttp.Args,
 	timeout time.Duration) (*fasthttp.Response, error) {
@@ -75,7 +64,7 @@ func (c *Client) DoWithTimeout(
 }
 
 // DoWithoutTimeout 发起一个没有超时时间的请求
-func (c *Client) DoWithoutTimeout(
+func (c *HTTPClient) DoWithoutTimeout(
 	url string, args *fasthttp.Args) (*fasthttp.Response, error) {
 
 	req := c.getRequestWithArgs(args)
@@ -84,7 +73,7 @@ func (c *Client) DoWithoutTimeout(
 }
 
 // DoContentTypeWithTimeout 发起一个带有超时时间的请求
-func (c *Client) DoContentTypeWithTimeout(
+func (c *HTTPClient) DoContentTypeWithTimeout(
 	contentType, url string,
 	args *fasthttp.Args, timeout time.Duration) (*fasthttp.Response, error) {
 
@@ -94,7 +83,7 @@ func (c *Client) DoContentTypeWithTimeout(
 }
 
 // DoContentTypeWithoutTimeout 发起一个没有超时时间的请求
-func (c *Client) DoContentTypeWithoutTimeout(
+func (c *HTTPClient) DoContentTypeWithoutTimeout(
 	contentType, url string, args *fasthttp.Args) (*fasthttp.Response, error) {
 
 	req := c.getRequestWithArgs(args)
@@ -103,7 +92,7 @@ func (c *Client) DoContentTypeWithoutTimeout(
 }
 
 // DoRequest 指定请求头内容类型发起一个带有超时时间的请求
-func (c *Client) DoRequest(
+func (c *HTTPClient) DoRequest(
 	url string,
 	req *fasthttp.Request) (*fasthttp.Response, error) {
 
@@ -116,7 +105,7 @@ func (c *Client) DoRequest(
 }
 
 // DoRequestWithTimeout 指定请求头内容类型发起一个带有超时时间的请求直接返回 *fasthttp.Response
-func (c *Client) DoRequestWithTimeout(
+func (c *HTTPClient) DoRequestWithTimeout(
 	url string,
 	req *fasthttp.Request,
 	timeout time.Duration) (*fasthttp.Response, error) {
@@ -130,7 +119,7 @@ func (c *Client) DoRequestWithTimeout(
 }
 
 // DoRequestWithoutTimeout 指定请求头内容类型发起一个没有超时时间的请求
-func (c *Client) DoRequestWithoutTimeout(
+func (c *HTTPClient) DoRequestWithoutTimeout(
 	url string, req *fasthttp.Request) (*fasthttp.Response, error) {
 
 	resp := c.prepareDo(url, req)

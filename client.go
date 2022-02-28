@@ -5,17 +5,21 @@ package ruixuego
 import (
 	"crypto/sha1" // nolint:gosec
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"hash"
+	"net/http"
 	"strconv"
 	"sync"
 	"time"
 
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego/httpclient"
-
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
+
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bufferpool"
 )
+
+const defaultStatus = -1
 
 const (
 	headerTraceID   = "ruixue-traceid"
@@ -23,6 +27,7 @@ const (
 	headerTimestamp = "ruixue-cpts"
 	headerSign      = "ruixue-cpsign"
 	headerVersion   = "ruixue-version"
+	headerDataCount = "ruixue-datacount"
 )
 
 const (
@@ -41,22 +46,60 @@ const (
 	apiLBSUpdate             = "/Social/ServerAPI/LBSUpdate"
 	apiLBSDelete             = "/Social/ServerAPI/LBSDelete"
 	apiLBSRadius             = "/Social/ServerAPI/LBSRadius"
+	apiBigDataTrack          = "/Data/API/Track"
 )
 
 var defaultClient *Client
 
-func NewClient() *Client {
-	c := &Client{}
-	c.sha1Pool = &sync.Pool{
-		New: func() interface{} {
-			return sha1.New() // nolint:gosec
+func NewClient() (c *Client, err error) {
+	c = &Client{
+		sha1Pool: &sync.Pool{
+			New: func() interface{} {
+				return sha1.New() // nolint:gosec
+			},
 		},
+		httpClient: NewHTTPClient(config.Timeout, config.Concurrency),
 	}
-	return c
+
+	if config.BigData != nil {
+		c.producer, err = NewProducer(c, config.BigData)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return c, nil
 }
 
 type Client struct {
-	sha1Pool *sync.Pool
+	httpClient *HTTPClient
+	sha1Pool   *sync.Pool
+	producer   *Producer
+}
+
+// Close SDK 客户端在关闭时必须显式调用该方法, 已保障数据不会丢失
+func (c *Client) Close() error {
+	if c.producer != nil {
+		return c.producer.Close()
+	}
+	return nil
+}
+
+func (c *Client) getRequest(withoutSign ...bool) *fasthttp.Request {
+	traceID, cpID, ts := uuid.New().String(),
+		strconv.FormatUint(uint64(config.CPID), 10),
+		strconv.FormatInt(time.Now().Unix(), 10)
+
+	req := GetRequest()
+	req.Header.Add("user-agent", "ruixue-go-sdk")
+	req.Header.Add(headerVersion, Version)
+	req.Header.Add(headerTraceID, traceID)
+	req.Header.Add(headerCPID, cpID)
+	req.Header.Add(headerTimestamp, ts)
+	if len(withoutSign) == 0 {
+		req.Header.Add(headerSign, c.getSign(traceID, ts))
+	}
+
+	return req
 }
 
 func (c *Client) getSign(traceID, ts string) string {
@@ -69,47 +112,64 @@ func (c *Client) getSign(traceID, ts string) string {
 }
 
 func (c *Client) query(
-	path string, arg, ret interface{}) error {
+	path string, arg, ret interface{}, compress ...bool) error {
+	_, err := c.queryCode(path, c.getRequest(), config.Timeout, arg, ret, compress...)
+	return err
+}
 
-	traceID, cpID, ts := uuid.New().String(),
-		strconv.FormatUint(uint64(config.CPID), 10),
-		strconv.FormatInt(time.Now().Unix(), 10)
+func (c *Client) queryCode(
+	path string, req *fasthttp.Request, timeout time.Duration, arg, ret interface{}, compress ...bool) (int, error) {
 
-	req := httpclient.GetRequest()
-	req.Header.Add(headerTraceID, traceID)
-	req.Header.Add(headerCPID, cpID)
-	req.Header.Add(headerTimestamp, ts)
-	req.Header.Add(headerSign, c.getSign(traceID, ts))
-	req.Header.Add(headerVersion, Version)
+	code := defaultStatus
 
 	if arg != nil {
-		b, err := MarshalJSON(arg)
-		if err != nil {
-			return err
-		}
 		req.Header.SetMethod("POST")
-		req.SetBody(b)
+
+		var b []byte
+		var ok bool
+		var err error
+		b, ok = arg.([]byte)
+		if !ok {
+			b, err = MarshalJSON(arg)
+			if err != nil {
+				return code, err
+			}
+		}
+		if len(compress) == 1 && compress[0] {
+			buf, err := gZIPCompress(b)
+			if err != nil {
+				bufferpool.Put(buf)
+				return code, err
+			}
+			req.Header.Set("content-encoding", "gzip")
+			req.SetBody(buf.Bytes())
+			bufferpool.Put(buf)
+		} else {
+			req.SetBody(b)
+		}
 	}
 
-	resp, err := httpclient.DefaultClient().DoRequest(config.APIDomain+path, req)
+	resp, err := c.httpClient.DoRequestWithTimeout(
+		config.APIDomain+path, req, timeout)
 	if err != nil {
-		return err
+		return code, err
 	}
-	if resp.StatusCode() != fasthttp.StatusOK {
-		return fmt.Errorf("%s", resp.Body())
+	code = resp.StatusCode()
+	if code != fasthttp.StatusOK {
+		return code, errors.New(http.StatusText(code))
 	}
 
 	if ret != nil {
 		err = UnmarshalJSON(resp.Body(), ret)
-		httpclient.PutResponse(resp)
+		PutResponse(resp)
 		if err != nil {
-			return err
+			return code, err
 		}
 	} else {
-		httpclient.PutResponse(resp)
+		PutResponse(resp)
 	}
 
-	return nil
+	return code, nil
 }
 
 func (c *Client) checkResponse(resp *response) error {
@@ -515,4 +575,33 @@ func (c *Client) LBSRadius(
 		return nil, err
 	}
 	return ret, nil
+}
+
+// Track 大数据埋点事件上报
+// 		distinctID 用户标识, 通常为瑞雪 OpenID
+// 		event 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
+//		properties 自定义事件属性
+// 		isLogined 用以标记 distinctID 是否为登录后的用户标识
+func (c *Client) Track(
+	distinctID, event string, properties map[string]interface{}, isLogined bool) error {
+	return c.producer.Track(distinctID, event, properties, isLogined)
+}
+
+// track 大数据埋点记录
+func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
+	if len(data) == 0 {
+		return defaultStatus, nil
+	}
+
+	req, ret := c.getRequest(true), &response{}
+	req.Header.Add(headerDataCount, Itoa(logCount))
+	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, compress)
+	if err != nil {
+		return code, err
+	}
+	err = c.checkResponse(ret)
+	if err != nil {
+		return code, err
+	}
+	return code, nil
 }

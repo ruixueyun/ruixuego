@@ -9,4 +9,6 @@ var (
 	ErrInvalidAppID    = errors.New("invalid appid")
 	ErrAppKeyNotExistx = errors.New("appkey not exists")
 	ErrInvalidType     = errors.New("invalid type")
+
+	errProducerShutdown = errors.New("producer already shut down")
 )

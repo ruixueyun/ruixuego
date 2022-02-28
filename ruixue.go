@@ -5,14 +5,19 @@ package ruixuego
 
 import "fmt"
 
-const Version = "2.0.0"
+const Version = "2.0.1"
 
 var config *Config
 
 // Init 初始化 SDK
-func Init(conf *Config) error {
+func Init(conf *Config) (err error) {
+	conf.done()
+
 	config = conf
-	defaultClient = NewClient()
+	defaultClient, err = NewClient()
+	if err != nil {
+		return err
+	}
 	return loadAppKeys(config.AppKeys)
 }
 
@@ -32,4 +37,8 @@ func loadAppKeys(m map[string]map[string]string) error {
 
 func GetDefaultClient() *Client {
 	return defaultClient
+}
+
+func Close() error {
+	return defaultClient.Close()
 }
