@@ -25,7 +25,7 @@ type BigDataLog struct {
 	Type         string                 `json:"type"`
 	Time         string                 `json:"time"`
 	DistinctID   string                 `json:"distinct_id,omitempty"`
-	EventName    string                 `json:"event_name,omitempty"`
+	Event        string                 `json:"event,omitempty"`
 	UUID         string                 `json:"uuid,omitempty"`
 	IP           string                 `json:"ip,omitempty"`
 	Properties   map[string]interface{} `json:"properties"`
