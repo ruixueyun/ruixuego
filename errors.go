@@ -5,6 +5,7 @@ package ruixuego
 import "errors"
 
 var (
+	ErrInvalidCPID     = errors.New("invalid cpid")
 	ErrInvalidOpenID   = errors.New("invalid openid")
 	ErrInvalidAppID    = errors.New("invalid appid")
 	ErrAppKeyNotExistx = errors.New("appkey not exists")

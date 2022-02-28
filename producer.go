@@ -50,6 +50,9 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 	defer p.wg.Done()
 
 	cpID := extractCPID(properties)
+	if cpID == 0 {
+		return ErrInvalidCPID
+	}
 	appID, channelID, subChannelID :=
 		extractStringProperty(properties, PresetKeyAppID),
 		extractStringProperty(properties, PresetKeyChannelID),

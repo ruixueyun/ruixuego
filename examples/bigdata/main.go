@@ -39,7 +39,10 @@ func main() {
 		"123456",
 		"game",
 		map[string]interface{}{
-			"key1": "val",
+			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
+			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
+			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
+			"key1":                         "val",
 		},
 		true)
 	if err != nil {
@@ -50,7 +53,10 @@ func main() {
 		"123456",
 		"game",
 		map[string]interface{}{
-			"key2": 888,
+			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
+			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
+			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
+			"key2":                         888,
 		},
 		true)
 	if err != nil {
