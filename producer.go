@@ -53,10 +53,11 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 	if cpID == 0 {
 		return ErrInvalidCPID
 	}
-	appID, channelID, subChannelID :=
+	appID, channelID, subChannelID, platformID :=
 		extractStringProperty(properties, PresetKeyAppID),
 		extractStringProperty(properties, PresetKeyChannelID),
-		extractStringProperty(properties, PresetKeySubChannelID)
+		extractStringProperty(properties, PresetKeySubChannelID),
+		extractInt32(properties, PresetKeyPlatformID)
 
 	uuidStr, timeStr, ipStr :=
 		extractUUID(properties),
@@ -67,10 +68,11 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 		Type:         typeTrack,
 		Time:         timeStr,
 		DistinctID:   distinctID,
-		EventName:    event,
+		Event:        event,
 		UUID:         uuidStr,
 		IP:           ipStr,
 		Properties:   properties,
+		PlatformID:   platformID,
 		AppID:        appID,
 		ChannelID:    channelID,
 		SubChannelID: subChannelID,
@@ -95,6 +97,16 @@ func extractStringProperty(properties map[string]interface{}, key string) string
 		}
 	}
 	return ""
+}
+
+func extractInt32(properties map[string]interface{}, key string) int32 {
+	if t, ok := properties[key]; ok {
+		delete(properties, key)
+		if v, ok := t.(int32); ok {
+			return v
+		}
+	}
+	return 0
 }
 
 func extractCPID(properties map[string]interface{}) uint32 {

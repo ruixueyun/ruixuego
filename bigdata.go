@@ -8,6 +8,7 @@ const (
 
 // 预置 Key 定义
 const (
+	PresetKeyPlatformID   = "$platformid"
 	PresetKeyCPID         = "$cpid"
 	PresetKeyAppID        = "$appid"
 	PresetKeyChannelID    = "$channelid"
@@ -33,4 +34,5 @@ type BigDataLog struct {
 	ChannelID    string                 `json:"channelid,omitempty"`
 	SubChannelID string                 `json:"subchannelid,omitempty"`
 	CPID         uint32                 `json:"cpid"`
+	PlatformID   int32                  `json:"platformid"`
 }
