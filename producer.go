@@ -77,6 +77,7 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 		ChannelID:    channelID,
 		SubChannelID: subChannelID,
 		CPID:         cpID,
+		IsLogined:    isLogined,
 	}
 
 	return p.writer.Write(logData)

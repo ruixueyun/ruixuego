@@ -35,4 +35,5 @@ type BigDataLog struct {
 	SubChannelID string                 `json:"subchannelid,omitempty"`
 	CPID         uint32                 `json:"cpid"`
 	PlatformID   int32                  `json:"platformid"`
+	IsLogined    bool                   `json:"islogined"`
 }
