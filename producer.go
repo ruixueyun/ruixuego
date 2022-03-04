@@ -38,11 +38,11 @@ type Producer struct {
 }
 
 // Track 大数据埋点事件上报
+// 		devicecode 设备码
 // 		distinctID 用户标识, 通常为瑞雪 OpenID
 // 		event 事件名
 //		properties 自定义事件属性
-// 		isLogined 用以标记 distinctID 是否为登录后的用户标识
-func (p *Producer) Track(distinctID, event string, properties map[string]interface{}, isLogined bool) error {
+func (p *Producer) Track(devicecode, distinctID, event string, properties map[string]interface{}) error {
 	if p.isShutDown.Load() {
 		return errProducerShutdown
 	}
@@ -68,6 +68,7 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 		Type:         typeTrack,
 		Time:         timeStr,
 		DistinctID:   distinctID,
+		Devicecode:   devicecode,
 		Event:        event,
 		UUID:         uuidStr,
 		IP:           ipStr,
@@ -77,7 +78,6 @@ func (p *Producer) Track(distinctID, event string, properties map[string]interfa
 		ChannelID:    channelID,
 		SubChannelID: subChannelID,
 		CPID:         cpID,
-		IsLogined:    isLogined,
 	}
 
 	return p.writer.Write(logData)

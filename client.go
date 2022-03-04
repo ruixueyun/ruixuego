@@ -583,8 +583,8 @@ func (c *Client) LBSRadius(
 //		properties 自定义事件属性
 // 		isLogined 用以标记 distinctID 是否为登录后的用户标识
 func (c *Client) Track(
-	distinctID, event string, properties map[string]interface{}, isLogined bool) error {
-	return c.producer.Track(distinctID, event, properties, isLogined)
+	devicecode, distinctID, event string, properties map[string]interface{}) error {
+	return c.producer.Track(devicecode, distinctID, event, properties)
 }
 
 // track 大数据埋点记录
