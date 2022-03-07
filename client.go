@@ -578,16 +578,16 @@ func (c *Client) LBSRadius(
 }
 
 // Track 大数据埋点事件上报
-// 		distinctID 用户标识, 通常为瑞雪 OpenID
-// 		event 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
-//		properties 自定义事件属性
-// 		isLogined 用以标记 distinctID 是否为登录后的用户标识
+// 		devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
+// 		distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
+// 		event (不能为空) 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
+//		properties (可为空) 自定义事件属性
 func (c *Client) Track(
 	devicecode, distinctID, event string, properties map[string]interface{}) error {
 	return c.producer.Track(devicecode, distinctID, event, properties)
 }
 
-// track 大数据埋点记录
+// track 将埋点数据上报给瑞雪云
 func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	if len(data) == 0 {
 		return defaultStatus, nil

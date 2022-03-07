@@ -43,6 +43,12 @@ type Producer struct {
 // 		event 事件名
 //		properties 自定义事件属性
 func (p *Producer) Track(devicecode, distinctID, event string, properties map[string]interface{}) error {
+	if devicecode == "" {
+		return ErrInvalidDevicecode
+	}
+	if event == "" {
+		return ErrInvalidEvent
+	}
 	if p.isShutDown.Load() {
 		return errProducerShutdown
 	}
