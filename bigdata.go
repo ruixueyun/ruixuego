@@ -25,15 +25,15 @@ const (
 type BigDataLog struct {
 	Type         string                 `json:"type"`
 	Time         string                 `json:"time"`
-	DistinctID   string                 `json:"distinctid"`
+	DistinctID   string                 `json:"distinct_id"`
 	Devicecode   string                 `json:"devicecode"`
 	Event        string                 `json:"event"`
 	UUID         string                 `json:"uuid"`
 	IP           string                 `json:"ip,omitempty"`
 	Properties   map[string]interface{} `json:"properties"`
-	AppID        string                 `json:"appid,omitempty"`
-	ChannelID    string                 `json:"channelid,omitempty"`
-	SubChannelID string                 `json:"subchannelid,omitempty"`
+	AppID        string                 `json:"app_id,omitempty"`
+	ChannelID    string                 `json:"channel_id,omitempty"`
+	SubChannelID string                 `json:"sub_channel_id,omitempty"`
 	CPID         uint32                 `json:"cpid"`
-	PlatformID   int32                  `json:"platformid"`
+	PlatformID   int32                  `json:"platform_id"`
 }
