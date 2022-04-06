@@ -13,10 +13,10 @@ import (
 	"sync"
 	"time"
 
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bufferpool"
+
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
-
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bufferpool"
 )
 
 const defaultStatus = -1
@@ -84,7 +84,7 @@ func (c *Client) Close() error {
 	return nil
 }
 
-func (c *Client) getRequest(withoutSign ...bool) *fasthttp.Request {
+func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	traceID, cpID, ts := uuid.New().String(),
 		strconv.FormatUint(uint64(config.CPID), 10),
 		strconv.FormatInt(time.Now().Unix(), 10)
@@ -99,7 +99,7 @@ func (c *Client) getRequest(withoutSign ...bool) *fasthttp.Request {
 		req.Header.Add(headerSign, c.getSign(traceID, ts))
 	}
 
-	return req
+	return traceID, req
 }
 
 func (c *Client) getSign(traceID, ts string) string {
@@ -111,10 +111,31 @@ func (c *Client) getSign(traceID, ts string) string {
 	return ret
 }
 
+func (c *Client) queryAndCheckResponse(
+	path string, req interface{}, resp *response, compress ...bool) error {
+
+	if resp == nil {
+		resp = &response{}
+	}
+
+	traceID, err := c.query(path, req, resp, compress...)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	err = c.checkResponse(resp)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	return nil
+}
+
 func (c *Client) query(
-	path string, arg, ret interface{}, compress ...bool) error {
-	_, err := c.queryCode(path, c.getRequest(), config.Timeout, arg, ret, compress...)
-	return err
+	path string, arg, ret interface{}, compress ...bool) (string, error) {
+	traceID, req := c.getRequest()
+	_, err := c.queryCode(path, req, config.Timeout, arg, ret, compress...)
+	return traceID, err
 }
 
 func (c *Client) queryCode(
@@ -191,17 +212,7 @@ func (c *Client) SetUserInfo(appID, openID string, userinfo *UserInfo) error {
 	userinfo.AppID = appID
 	userinfo.OpenID = openID
 
-	ret := &response{}
-	err := c.query(apiSetUserInfo, userinfo, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.queryAndCheckResponse(apiSetUserInfo, userinfo, nil)
 }
 
 // SetCustom 给用户设置社交模块的自定义信息
@@ -213,21 +224,11 @@ func (c *Client) SetCustom(appID, openID, custom string) error {
 		return ErrInvalidAppID
 	}
 
-	ret := &response{}
-	err := c.query(apiSetCustom, &argCustom{
+	return c.queryAndCheckResponse(apiSetCustom, &argCustom{
 		AppID:  appID,
 		OpenID: openID,
 		Custom: custom,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	}, nil)
 }
 
 // AddRelation 添加自定义关系
@@ -242,7 +243,6 @@ func (c *Client) AddRelation(
 		return ErrInvalidType
 	}
 
-	ret := &response{}
 	arg := &argRelation{
 		Types:  types,
 		OpenID: openID,
@@ -254,16 +254,8 @@ func (c *Client) AddRelation(
 	if len(remarks) > 1 {
 		arg.UserRemarks = remarks[1]
 	}
-	err := c.query(apiAddRelation, arg, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return c.queryAndCheckResponse(apiAddRelation, arg, nil)
 }
 
 // DelRelation 删除自定义关系
@@ -276,21 +268,11 @@ func (c *Client) DelRelation(
 		return ErrInvalidType
 	}
 
-	ret := &response{}
-	err := c.query(apiDelRelation, &argRelation{
+	return c.queryAndCheckResponse(apiDelRelation, &argRelation{
 		Types:  types,
 		OpenID: openID,
 		Target: targetOpenID,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	}, nil)
 }
 
 // UpdateRelationRemarks 更新自定关系备注
@@ -303,22 +285,12 @@ func (c *Client) UpdateRelationRemarks(
 		return ErrInvalidType
 	}
 
-	ret := &response{}
-	err := c.query(apiUpdateRelationRemarks, &argRelation{
+	return c.queryAndCheckResponse(apiUpdateRelationRemarks, &argRelation{
 		Type:          typ,
 		OpenID:        openID,
 		Target:        targetOpenID,
 		TargetRemarks: remarks,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	}, nil)
 }
 
 // RelationList 获取自定关系列表
@@ -332,17 +304,16 @@ func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
 
 	ret := make([]*RelationUser, 0)
 	resp := &response{Data: &ret}
-	err := c.query(apiRelationList, &argRelation{
+
+	err := c.queryAndCheckResponse(apiRelationList, &argRelation{
 		Type:   typ,
 		OpenID: openID,
 	}, resp)
+
 	if err != nil {
 		return nil, err
 	}
-	err = c.checkResponse(resp)
-	if err != nil {
-		return nil, err
-	}
+
 	return ret, nil
 }
 
@@ -350,19 +321,14 @@ func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
 func (c *Client) HasRelation(typ, openID, targetOpenID string) (bool, error) {
 	ret := false
 	resp := &response{Data: &ret}
-	err := c.query(apiHasRelation, &argRelation{
+
+	err := c.queryAndCheckResponse(apiHasRelation, &argRelation{
 		Type:   typ,
 		OpenID: openID,
 		Target: targetOpenID,
 	}, resp)
-	if err != nil {
-		return false, err
-	}
-	err = c.checkResponse(resp)
-	if err != nil {
-		return false, err
-	}
-	return ret, nil
+
+	return ret, err
 }
 
 // AddFriend 添加好友
@@ -374,7 +340,6 @@ func (c *Client) AddFriend(
 		return ErrInvalidOpenID
 	}
 
-	ret := &response{}
 	arg := &argRelation{
 		OpenID: openID,
 		Target: targetOpenID,
@@ -385,16 +350,8 @@ func (c *Client) AddFriend(
 	if len(remarks) > 1 {
 		arg.UserRemarks = remarks[1]
 	}
-	err := c.query(apiAddFriend, arg, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return c.queryAndCheckResponse(apiAddFriend, arg, nil)
 }
 
 // DelFriend 删除好友
@@ -404,20 +361,10 @@ func (c *Client) DelFriend(
 		return ErrInvalidOpenID
 	}
 
-	ret := &response{}
-	err := c.query(apiDelFriend, &argRelation{
+	return c.queryAndCheckResponse(apiDelFriend, &argRelation{
 		OpenID: openID,
 		Target: targetOpenID,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	}, nil)
 }
 
 // UpdateFriendRemarks 更新好友备注
@@ -427,21 +374,11 @@ func (c *Client) UpdateFriendRemarks(
 		return ErrInvalidOpenID
 	}
 
-	ret := &response{}
-	err := c.query(apiUpdateFriendRemarks, &argRelation{
+	return c.queryAndCheckResponse(apiUpdateFriendRemarks, &argRelation{
 		OpenID:        openID,
 		Target:        targetOpenID,
 		TargetRemarks: remarks,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	}, nil)
 }
 
 // FriendList 获取好友列表
@@ -452,16 +389,15 @@ func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
 
 	ret := make([]*RelationUser, 0)
 	resp := &response{Data: &ret}
-	err := c.query(apiFriendList, &argRelation{
+
+	err := c.queryAndCheckResponse(apiFriendList, &argRelation{
 		OpenID: openID,
 	}, resp)
+
 	if err != nil {
 		return nil, err
 	}
-	err = c.checkResponse(resp)
-	if err != nil {
-		return nil, err
-	}
+
 	return ret, nil
 }
 
@@ -473,18 +409,13 @@ func (c *Client) IsFriend(openID, targetOpenID string) (bool, error) {
 
 	ret := false
 	resp := &response{Data: &ret}
-	err := c.query(apiIsFriend, &argRelation{
+
+	err := c.queryAndCheckResponse(apiIsFriend, &argRelation{
 		OpenID: openID,
 		Target: targetOpenID,
 	}, resp)
-	if err != nil {
-		return false, err
-	}
-	err = c.checkResponse(resp)
-	if err != nil {
-		return false, err
-	}
-	return ret, nil
+
+	return ret, err
 }
 
 // LBSUpdate 更新 WGS84 坐标
@@ -497,21 +428,12 @@ func (c *Client) LBSUpdate(openID string, types []string, lon, lat float64) erro
 		return ErrInvalidType
 	}
 
-	ret := &response{}
-	err := c.query(apiLBSUpdate, &argLocation{
+	return c.queryAndCheckResponse(apiLBSUpdate, &argLocation{
 		OpenID:    openID,
 		Types:     types,
 		Longitude: lon,
 		Latitude:  lat,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-	return nil
+	}, nil)
 }
 
 // LBSDelete 删除 WGS84 坐标
@@ -523,19 +445,10 @@ func (c *Client) LBSDelete(openID string, types []string) error {
 		return ErrInvalidType
 	}
 
-	ret := &response{}
-	err := c.query(apiLBSDelete, &argLocation{
+	return c.queryAndCheckResponse(apiLBSDelete, &argLocation{
 		OpenID: openID,
 		Types:  types,
-	}, ret)
-	if err != nil {
-		return err
-	}
-	err = c.checkResponse(ret)
-	if err != nil {
-		return err
-	}
-	return nil
+	}, nil)
 }
 
 // LBSRadius 获取附近的人列表
@@ -566,14 +479,12 @@ func (c *Client) LBSRadius(
 	if len(count) == 1 {
 		arg.Count = count[0]
 	}
-	err := c.query(apiLBSRadius, arg, resp)
+
+	err := c.queryAndCheckResponse(apiLBSRadius, arg, resp)
 	if err != nil {
 		return nil, err
 	}
-	err = c.checkResponse(resp)
-	if err != nil {
-		return nil, err
-	}
+
 	return ret, nil
 }
 
@@ -593,15 +504,16 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 		return defaultStatus, nil
 	}
 
-	req, ret := c.getRequest(true), &response{}
+	traceID, req := c.getRequest(true)
+	ret := &response{}
 	req.Header.Add(headerDataCount, Itoa(logCount))
 	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, compress)
 	if err != nil {
-		return code, err
+		return code, errWithTraceID(err, traceID)
 	}
 	err = c.checkResponse(ret)
 	if err != nil {
-		return code, err
+		return code, errWithTraceID(err, traceID)
 	}
 	return code, nil
 }
