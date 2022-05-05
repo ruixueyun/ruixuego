@@ -1,7 +1,8 @@
-// Package httpclient HTTP 客户端
+// Package ruixuego httpclient HTTP 客户端
 package ruixuego
 
 import (
+	"crypto/tls"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -12,6 +13,12 @@ const defaultContentType = "application/json"
 // NewHTTPClient create http client
 func NewHTTPClient(timeout time.Duration, concurrency int) *HTTPClient {
 	return &HTTPClient{
+		client: fasthttp.Client{
+			TLSConfig:          &tls.Config{InsecureSkipVerify: true},
+			ReadTimeout:        timeout,
+			WriteTimeout:       timeout,
+			MaxConnWaitTimeout: timeout,
+		},
 		timeout:     timeout,
 		concurrency: make(chan struct{}, concurrency),
 	}
@@ -19,6 +26,7 @@ func NewHTTPClient(timeout time.Duration, concurrency int) *HTTPClient {
 
 // HTTPClient a fasthttp client
 type HTTPClient struct {
+	client      fasthttp.Client
 	timeout     time.Duration
 	concurrency chan struct{}
 }
@@ -98,7 +106,7 @@ func (c *HTTPClient) DoRequest(
 
 	resp := c.prepareDo(url, req)
 	defer c.afterDo(req)
-	if err := fasthttp.DoTimeout(req, resp, c.timeout); err != nil {
+	if err := c.client.DoTimeout(req, resp, c.timeout); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -112,7 +120,7 @@ func (c *HTTPClient) DoRequestWithTimeout(
 
 	resp := c.prepareDo(url, req)
 	defer c.afterDo(req)
-	if err := fasthttp.DoTimeout(req, resp, timeout); err != nil {
+	if err := c.client.DoTimeout(req, resp, timeout); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -124,7 +132,7 @@ func (c *HTTPClient) DoRequestWithoutTimeout(
 
 	resp := c.prepareDo(url, req)
 	defer c.afterDo(req)
-	if err := fasthttp.Do(req, resp); err != nil {
+	if err := c.client.Do(req, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
