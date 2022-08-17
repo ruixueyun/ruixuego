@@ -3,14 +3,10 @@
 package ruixuego
 
 import (
-	"crypto/sha1" // nolint:gosec
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"hash"
 	"net/http"
 	"strconv"
-	"sync"
 	"time"
 
 	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bufferpool"
@@ -31,33 +27,39 @@ const (
 )
 
 const (
-	apiSetUserInfo           = "/Social/ServerAPI/SetUserInfo"
-	apiSetCustom             = "/Social/ServerAPI/SetCustom"
-	apiAddRelation           = "/Social/ServerAPI/AddRelation"
-	apiDelRelation           = "/Social/ServerAPI/DeleteRelation"
-	apiUpdateRelationRemarks = "/Social/ServerAPI/UpdateRelationRemarks"
-	apiRelationList          = "/Social/ServerAPI/RelationList"
-	apiHasRelation           = "/Social/ServerAPI/HasRelation"
-	apiAddFriend             = "/Social/ServerAPI/AddFriend"
-	apiDelFriend             = "/Social/ServerAPI/DelFriend"
-	apiUpdateFriendRemarks   = "/Social/ServerAPI/UpdateFriendRemarks"
-	apiFriendList            = "/Social/ServerAPI/FriendList"
-	apiIsFriend              = "/Social/ServerAPI/IsFriend"
-	apiLBSUpdate             = "/Social/ServerAPI/LBSUpdate"
-	apiLBSDelete             = "/Social/ServerAPI/LBSDelete"
-	apiLBSRadius             = "/Social/ServerAPI/LBSRadius"
-	apiBigDataTrack          = "/Data/API/Track"
+	apiSetUserInfo                   = "/v1/social/serverapi/setuserinfo"
+	apiSetCustom                     = "/v1/social/serverapi/setcustom"
+	apiAddRelation                   = "/v1/social/serverapi/addrelation"
+	apiDelRelation                   = "/v1/social/serverapi/deleterelation"
+	apiUpdateRelationRemarks         = "/v1/social/serverapi/updaterelationremarks"
+	apiRelationList                  = "/v1/social/serverapi/relationlist"
+	apiHasRelation                   = "/v1/social/serverapi/hasrelation"
+	apiAddFriend                     = "/v1/social/serverapi/addfriend"
+	apiDelFriend                     = "/v1/social/serverapi/delfriend"
+	apiUpdateFriendRemarks           = "/v1/social/serverapi/updatefriendremarks"
+	apiFriendList                    = "/v1/social/serverapi/friendlist"
+	apiIsFriend                      = "/v1/social/serverapi/isfriend"
+	apiLBSUpdate                     = "/v1/social/serverapi/lbsupdate"
+	apiLBSDelete                     = "/v1/social/serverapi/lbsdelete"
+	apiLBSRadius                     = "/v1/social/serverapi/lbsradius"
+	apiBigDataTrack                  = "/v1/data/api/track"
+	apiIMSLogin                      = "/v1/ims/server/login"
+	apiIMSSendMessage                = "/v1/ims/server/sendmessage"
+	apiIMSGetHistory                 = "/v1/ims/server/gethistory"
+	apiIMSCreateConversation         = "/v1/ims/server/createconversation"
+	apiIMSUpdateConversation         = "/v1/ims/server/updateconversation"
+	apiIMSDeleteConversation         = "/v1/ims/server/deleteconversation"
+	apiIMSGetConversation            = "/v1/ims/server/getconversation"
+	apiIMSJoinConversation           = "/v1/ims/server/joinconversation"
+	apiIMSLeaveConversation          = "/v1/ims/server/leaveconversation"
+	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
+	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
 )
 
 var defaultClient *Client
 
 func NewClient() (c *Client, err error) {
 	c = &Client{
-		sha1Pool: &sync.Pool{
-			New: func() interface{} {
-				return sha1.New() // nolint:gosec
-			},
-		},
 		httpClient: NewHTTPClient(config.Timeout, config.Concurrency),
 	}
 
@@ -72,7 +74,6 @@ func NewClient() (c *Client, err error) {
 
 type Client struct {
 	httpClient *HTTPClient
-	sha1Pool   *sync.Pool
 	producer   *Producer
 }
 
@@ -96,19 +97,10 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerCPID, cpID)
 	req.Header.Add(headerTimestamp, ts)
 	if len(withoutSign) == 0 {
-		req.Header.Add(headerSign, c.getSign(traceID, ts))
+		req.Header.Add(headerSign, GetSign(traceID, ts))
 	}
 
 	return traceID, req
-}
-
-func (c *Client) getSign(traceID, ts string) string {
-	h := c.sha1Pool.Get().(hash.Hash)
-	_, _ = h.Write([]byte(traceID + ts + config.CPKey))
-	ret := hex.EncodeToString(h.Sum(nil))
-	h.Reset()
-	c.sha1Pool.Put(h)
-	return ret
 }
 
 func (c *Client) queryAndCheckResponse(
@@ -419,7 +411,8 @@ func (c *Client) IsFriend(openID, targetOpenID string) (bool, error) {
 }
 
 // LBSUpdate 更新 WGS84 坐标
-// 		types 为 CP	自定义坐标分组, 比如可以同时将用户加入到 all 和 female 两个列表中
+//
+//	types 为 CP	自定义坐标分组, 比如可以同时将用户加入到 all 和 female 两个列表中
 func (c *Client) LBSUpdate(openID string, types []string, lon, lat float64) error {
 	if openID == "" {
 		return ErrInvalidOpenID
@@ -489,10 +482,11 @@ func (c *Client) LBSRadius(
 }
 
 // Track 大数据埋点事件上报
-// 		devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
-// 		distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
-// 		event (不能为空) 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
-//		properties (可为空) 自定义事件属性
+//
+//	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
+//	distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
+//	event (不能为空) 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
+//	properties (可为空) 自定义事件属性
 func (c *Client) Track(
 	devicecode, distinctID, event string, properties map[string]interface{}) error {
 	return c.producer.Track(devicecode, distinctID, event, properties)
@@ -516,4 +510,63 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 		return code, errWithTraceID(err, traceID)
 	}
 	return code, nil
+}
+
+func (c *Client) IMSLogin(req *IMSLoginReq) (*IMSLoginResp, error) {
+	ret := &IMSLoginResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiIMSLogin, req, resp)
+	return ret, err
+}
+
+func (c *Client) IMSSendMessage(req *IMSMessage) (*IMSMessageAck, error) {
+	ret := &IMSMessageAck{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiIMSSendMessage, req, resp)
+	return ret, err
+}
+
+func (c *Client) IMSGetHistory(req *IMSHistoryReq) (*IMSHistoryResp, error) {
+	ret := &IMSHistoryResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiIMSGetHistory, req, resp)
+	return ret, err
+}
+
+func (c *Client) IMSCreateConversation(req *IMSCreateConvReq) error {
+	return c.queryAndCheckResponse(apiIMSCreateConversation, req, nil)
+}
+
+func (c *Client) IMSUpdateConversation(req *IMSUpdateConvReq) error {
+	return c.queryAndCheckResponse(apiIMSUpdateConversation, req, nil)
+}
+
+func (c *Client) IMSDeleteConversation(req *IMSConvDeleteReq) error {
+	return c.queryAndCheckResponse(apiIMSDeleteConversation, req, nil)
+}
+
+func (c *Client) IMSGetConversation(req *IMSGetConversationReq) (*IMSConversation, error) {
+	ret := &IMSConversation{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiIMSGetConversation, req, resp)
+	return ret, err
+}
+
+func (c *Client) IMSJoinConversation(req *IMSJoinConversationReq) error {
+	return c.queryAndCheckResponse(apiIMSJoinConversation, req, nil)
+}
+
+func (c *Client) IMSLeaveConversation(req *IMSLeaveConversationReq) error {
+	return c.queryAndCheckResponse(apiIMSLeaveConversation, req, nil)
+}
+
+func (c *Client) IMSUpdateConversationUserData(req *IMSUpdateConvUserDataReq) error {
+	return c.queryAndCheckResponse(apiIMSUpdateConversationUserData, req, nil)
+}
+
+func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IMSConversation, error) {
+	ret := make([]*IMSConversation, 0)
+	resp := &response{Data: &ret}
+	err := c.queryAndCheckResponse(apiIMSConversationUserList, req, resp)
+	return ret, err
 }
