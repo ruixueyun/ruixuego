@@ -488,8 +488,8 @@ func (c *Client) LBSRadius(
 //	event (不能为空) 事件名, 由 CP 自行指定, 后续应与大数据平台创建的埋点名一致
 //	properties (可为空) 自定义事件属性
 func (c *Client) Track(
-	devicecode, distinctID, event string, properties map[string]interface{}) error {
-	return c.producer.Track(devicecode, distinctID, event, properties)
+	devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
+	return c.producer.Track(devicecode, distinctID, event, preset, properties)
 }
 
 // UserTrack 大数据埋点用户属性上报
@@ -497,10 +497,10 @@ func (c *Client) Track(
 //	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
 //	distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
 //	updateType (不能为空) user_setonce,user_set
-//	properties (可为空) 自定义事件属性
+//	properties (可为空) 自定义用户属性
 func (c *Client) UserTrack(
-	devicecode, distinctID, updateType string, properties map[string]interface{}) error {
-	return c.producer.UserTrack(devicecode, distinctID, updateType, properties)
+	devicecode, distinctID, updateType string, preset, properties map[string]interface{}) error {
+	return c.producer.UserTrack(devicecode, distinctID, updateType, preset, properties)
 }
 
 // track 将埋点数据上报给瑞雪云

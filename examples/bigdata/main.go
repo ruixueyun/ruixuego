@@ -43,21 +43,23 @@ func main() {
 			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
-			"key1":                         "val",
+		}, map[string]interface{}{
+			"key1": "val",
 		})
 	if err != nil {
 		panic(err)
 	}
 
-	err = ruixuego.GetDefaultClient().Track(
+	err = ruixuego.GetDefaultClient().UserTrack(
 		"abcdef",
 		"123456",
-		"game",
-		map[string]interface{}{
+		"user_setonce",
+		map[string]interface{}{ // 预制属性
 			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
-			"key2":                         888,
+		}, map[string]interface{}{ // 自定义属性
+			"key2": 888,
 		})
 	if err != nil {
 		panic(err)

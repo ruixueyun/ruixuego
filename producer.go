@@ -9,6 +9,8 @@ import (
 	"github.com/google/uuid"
 )
 
+type BigdataOptions func(p *BigDataLog) error
+
 func NewProducer(c *Client, conf *BigDataConfig) (*Producer, error) {
 	conf.done()
 
@@ -41,21 +43,24 @@ type Producer struct {
 // 		devicecode 设备码
 // 		distinctID 用户标识, 通常为瑞雪 OpenID
 // 		event 事件名
+//      preset 预置事件属性
 //		properties 自定义事件属性
-func (p *Producer) Track(devicecode, distinctID, event string, properties map[string]interface{}) error {
-	return p.track(typeTrack, devicecode, distinctID, event, properties)
+func (p *Producer) Track(devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
+	return p.track(typeTrack, devicecode, distinctID, event, preset, properties)
 }
 
-// UserTrack 大数据埋点用户上报
+// UserTrack 大数据埋点用户属性上报
 // 		devicecode 设备码
 // 		distinctID 用户标识, 通常为瑞雪 OpenID
 // 		updateType user_setonce,user_set
-//		properties 自定义事件属性
-func (p *Producer) UserTrack(devicecode, distinctID, updateType string, properties map[string]interface{}) error {
-	return p.track(typeUser, devicecode, distinctID, updateType, properties)
+//      preset 预置用户属性
+//		properties 自定义用户属性
+func (p *Producer) UserTrack(devicecode, distinctID, updateType string, preset, properties map[string]interface{}) error {
+	return p.track(typeUser, devicecode, distinctID, updateType, preset, properties)
 }
 
-func (p *Producer) track(eventType, devicecode, distinctID, event string, properties map[string]interface{}) error {
+func (p *Producer) track(eventType, devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
+
 	if devicecode == "" {
 		return ErrInvalidDevicecode
 	}
@@ -65,40 +70,30 @@ func (p *Producer) track(eventType, devicecode, distinctID, event string, proper
 	if p.isShutDown.Load() {
 		return errProducerShutdown
 	}
-	p.wg.Add(1)
-	defer p.wg.Done()
-
-	cpID := extractCPID(properties)
+	cpID := extractCPID(preset)
 	if cpID == 0 {
 		return ErrInvalidCPID
 	}
-	appID, channelID, subChannelID, platformID :=
-		extractStringProperty(properties, PresetKeyAppID),
-		extractStringProperty(properties, PresetKeyChannelID),
-		extractStringProperty(properties, PresetKeySubChannelID),
-		extractInt32(properties, PresetKeyPlatformID)
-
-	uuidStr, timeStr, ipStr :=
-		extractUUID(properties),
-		extractTime(properties),
-		extractStringProperty(properties, PresetKeyIP)
+	p.wg.Add(1)
+	defer p.wg.Done()
 
 	logData := &BigDataLog{
-		Type:         eventType,
-		Time:         timeStr,
-		DistinctID:   distinctID,
-		Devicecode:   devicecode,
-		Event:        event,
-		UUID:         uuidStr,
-		IP:           ipStr,
-		Properties:   properties,
-		PlatformID:   platformID,
-		AppID:        appID,
-		ChannelID:    channelID,
-		SubChannelID: subChannelID,
-		CPID:         cpID,
+		Type:       eventType,
+		DistinctID: distinctID,
+		Devicecode: devicecode,
+		Event:      event,
+		Properties: properties,
+		CPID:       cpID,
 	}
-
+	logData.UUID = extractUUID(preset)
+	logData.Time = extractTime(preset)
+	if preset != nil {
+		logData.PlatformID = extractInt32(preset, PresetKeyPlatformID)
+		logData.AppID = extractStringProperty(preset, PresetKeyAppID)
+		logData.ChannelID = extractStringProperty(preset, PresetKeyChannelID)
+		logData.SubChannelID = extractStringProperty(preset, PresetKeySubChannelID)
+		logData.IP = extractStringProperty(properties, PresetKeyIP)
+	}
 	return p.writer.Write(logData)
 }
 
@@ -111,7 +106,6 @@ func (p *Producer) Close() error {
 
 func extractStringProperty(properties map[string]interface{}, key string) string {
 	if t, ok := properties[key]; ok {
-		delete(properties, key)
 		if v, ok := t.(string); ok {
 			return v
 		}
@@ -121,7 +115,6 @@ func extractStringProperty(properties map[string]interface{}, key string) string
 
 func extractInt32(properties map[string]interface{}, key string) int32 {
 	if t, ok := properties[key]; ok {
-		delete(properties, key)
 		if v, ok := t.(int32); ok {
 			return v
 		}
@@ -131,7 +124,6 @@ func extractInt32(properties map[string]interface{}, key string) int32 {
 
 func extractCPID(properties map[string]interface{}) uint32 {
 	if t, ok := properties[PresetKeyCPID]; ok {
-		delete(properties, PresetKeyCPID)
 		if v, ok := t.(uint32); ok {
 			return v
 		}
@@ -141,7 +133,6 @@ func extractCPID(properties map[string]interface{}) uint32 {
 
 func extractUUID(properties map[string]interface{}) string {
 	if t, ok := properties[PresetKeyUUID]; ok {
-		delete(properties, PresetKeyUUID)
 		if v, ok := t.(string); ok && v != "" {
 			return v
 		}
@@ -151,7 +142,6 @@ func extractUUID(properties map[string]interface{}) string {
 
 func extractTime(properties map[string]interface{}) string {
 	if t, ok := properties[PresetKeyTime]; ok {
-		delete(properties, PresetKeyTime)
 		switch v := t.(type) {
 		case string:
 			return v
