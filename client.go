@@ -492,6 +492,17 @@ func (c *Client) Track(
 	return c.producer.Track(devicecode, distinctID, event, properties)
 }
 
+// UserTrack 大数据埋点用户属性上报
+//
+//	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
+//	distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
+//	updateType (不能为空) user_setonce,user_set
+//	properties (可为空) 自定义事件属性
+func (c *Client) UserTrack(
+	devicecode, distinctID, updateType string, properties map[string]interface{}) error {
+	return c.producer.UserTrack(devicecode, distinctID, updateType, properties)
+}
+
 // track 将埋点数据上报给瑞雪云
 func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	if len(data) == 0 {

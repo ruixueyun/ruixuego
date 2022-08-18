@@ -20,6 +20,7 @@ const (
 
 const (
 	typeTrack = "track"
+	typeUser  = "user"
 )
 
 type BigDataLog struct {

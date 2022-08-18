@@ -43,6 +43,19 @@ type Producer struct {
 // 		event 事件名
 //		properties 自定义事件属性
 func (p *Producer) Track(devicecode, distinctID, event string, properties map[string]interface{}) error {
+	return p.track(typeTrack, devicecode, distinctID, event, properties)
+}
+
+// UserTrack 大数据埋点用户上报
+// 		devicecode 设备码
+// 		distinctID 用户标识, 通常为瑞雪 OpenID
+// 		updateType user_setonce,user_set
+//		properties 自定义事件属性
+func (p *Producer) UserTrack(devicecode, distinctID, updateType string, properties map[string]interface{}) error {
+	return p.track(typeUser, devicecode, distinctID, updateType, properties)
+}
+
+func (p *Producer) track(eventType, devicecode, distinctID, event string, properties map[string]interface{}) error {
 	if devicecode == "" {
 		return ErrInvalidDevicecode
 	}
@@ -71,7 +84,7 @@ func (p *Producer) Track(devicecode, distinctID, event string, properties map[st
 		extractStringProperty(properties, PresetKeyIP)
 
 	logData := &BigDataLog{
-		Type:         typeTrack,
+		Type:         eventType,
 		Time:         timeStr,
 		DistinctID:   distinctID,
 		Devicecode:   devicecode,
