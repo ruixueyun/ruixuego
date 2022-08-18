@@ -50,7 +50,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ruixuego.GetDefaultClient().UserTrack(
+	err = ruixuego.GetDefaultClient().TrackType(
 		"abcdef",
 		"123456",
 		"user_setonce",

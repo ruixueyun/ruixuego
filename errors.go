@@ -5,7 +5,7 @@ package ruixuego
 import "errors"
 
 var (
-	ErrInvalidDevicecode = errors.New("invalid devicecode")
+	ErrInvalidDevicecode = errors.New("invalid devicecode or distinctid")
 	ErrInvalidEvent      = errors.New("invalid event")
 	ErrInvalidCPID       = errors.New("invalid cpid")
 	ErrInvalidOpenID     = errors.New("invalid openid")

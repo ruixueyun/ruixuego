@@ -49,19 +49,19 @@ func (p *Producer) Track(devicecode, distinctID, event string, preset, propertie
 	return p.track(typeTrack, devicecode, distinctID, event, preset, properties)
 }
 
-// UserTrack 大数据埋点用户属性上报
+// TrackType 大数据埋点用户属性上报
 // 		devicecode 设备码
 // 		distinctID 用户标识, 通常为瑞雪 OpenID
 // 		updateType user_setonce,user_set
 //      preset 预置用户属性
 //		properties 自定义用户属性
-func (p *Producer) UserTrack(devicecode, distinctID, updateType string, preset, properties map[string]interface{}) error {
+func (p *Producer) TrackType(devicecode, distinctID, updateType string, preset, properties map[string]interface{}) error {
 	return p.track(typeUser, devicecode, distinctID, updateType, preset, properties)
 }
 
 func (p *Producer) track(eventType, devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
 
-	if devicecode == "" {
+	if devicecode == "" && distinctID == "" {
 		return ErrInvalidDevicecode
 	}
 	if event == "" {
