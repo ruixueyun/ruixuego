@@ -17,3 +17,4 @@ _*
 
 # apollo config or cache file
 .*_default
+/producer_test.go

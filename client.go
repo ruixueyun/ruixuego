@@ -481,6 +481,16 @@ func (c *Client) LBSRadius(
 	return ret, nil
 }
 
+// Tracks 大数据埋点事件上报
+//
+//	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
+//	distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
+//	opts: 动态参数设置
+func (c *Client) Tracks(
+	devicecode, distinctID string, opts ...BigdataOptions) error {
+	return c.producer.Tracks(devicecode, distinctID, opts...)
+}
+
 // Track 大数据埋点事件上报
 //
 //	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
@@ -490,17 +500,6 @@ func (c *Client) LBSRadius(
 func (c *Client) Track(
 	devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
 	return c.producer.Track(devicecode, distinctID, event, preset, properties)
-}
-
-// Tracks 大数据埋点事件上报
-//
-//	devicecode (不能为空) 用户设备码. 用户使用设备的唯一识别码
-//	distinctID (可为空) 用户标识. 通常为瑞雪 OpenID
-//	opts:
-
-func (c *Client) Tracks(
-	devicecode, distinctID string, opts ...BigdataOptions) error {
-	return c.producer.Tracks(devicecode, distinctID, opts...)
 }
 
 // TrackType 大数据埋点用户属性上报

@@ -46,6 +46,7 @@ func SetPreset(preset map[string]interface{}) BigdataOptions {
 		if cpID == 0 {
 			return ErrInvalidCPID
 		}
+		logData.CPID = cpID
 		logData.UUID = extractUUID(preset)
 		logData.Time = extractTime(preset)
 		if preset != nil {
@@ -112,8 +113,14 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 			return err
 		}
 	}
+	if logData.Type == "" {
+		return ErrInvalidType
+	}
 	if logData.CPID == 0 {
-		return ErrInvalidCPID
+		if config.CPID == 0 {
+			return ErrInvalidCPID
+		}
+		logData.CPID = config.CPID
 	}
 	if logData.UUID == "" {
 		logData.UUID = uuid.New().String()
