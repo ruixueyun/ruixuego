@@ -131,64 +131,6 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 	return p.writer.Write(logData)
 }
 
-// Track 大数据埋点事件上报
-// 		devicecode 设备码
-// 		distinctID 用户标识, 通常为瑞雪 OpenID
-// 		event 事件名
-//      preset 预置事件属性
-//		properties 自定义事件属性
-func (p *Producer) Track(devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
-	return p.track(typeTrack, devicecode, distinctID, event, preset, properties)
-}
-
-// TrackType 大数据埋点用户属性上报
-// 		devicecode 设备码
-// 		distinctID 用户标识, 通常为瑞雪 OpenID
-// 		updateType user_setonce,user_set
-//      preset 预置用户属性
-//		properties 自定义用户属性
-func (p *Producer) TrackType(devicecode, distinctID, updateType string, preset, properties map[string]interface{}) error {
-	return p.track(typeUser, devicecode, distinctID, updateType, preset, properties)
-}
-
-func (p *Producer) track(eventType, devicecode, distinctID, event string, preset, properties map[string]interface{}) error {
-
-	if devicecode == "" && distinctID == "" {
-		return ErrInvalidDevicecode
-	}
-	if event == "" {
-		return ErrInvalidEvent
-	}
-	if p.isShutDown.Load() {
-		return errProducerShutdown
-	}
-	cpID := extractCPID(preset)
-	if cpID == 0 {
-		return ErrInvalidCPID
-	}
-	p.wg.Add(1)
-	defer p.wg.Done()
-
-	logData := &BigDataLog{
-		Type:       eventType,
-		DistinctID: distinctID,
-		Devicecode: devicecode,
-		Event:      event,
-		Properties: properties,
-		CPID:       cpID,
-	}
-	logData.UUID = extractUUID(preset)
-	logData.Time = extractTime(preset)
-	if preset != nil {
-		logData.PlatformID = extractInt32(preset, PresetKeyPlatformID)
-		logData.AppID = extractStringProperty(preset, PresetKeyAppID)
-		logData.ChannelID = extractStringProperty(preset, PresetKeyChannelID)
-		logData.SubChannelID = extractStringProperty(preset, PresetKeySubChannelID)
-		logData.IP = extractStringProperty(preset, PresetKeyIP)
-	}
-	return p.writer.Write(logData)
-}
-
 // Close 服务停止前必须显式调用该方法, 不然可能造成数据丢失
 func (p *Producer) Close() error {
 	p.isShutDown.Store(true)
