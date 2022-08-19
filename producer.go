@@ -184,7 +184,7 @@ func (p *Producer) track(eventType, devicecode, distinctID, event string, preset
 		logData.AppID = extractStringProperty(preset, PresetKeyAppID)
 		logData.ChannelID = extractStringProperty(preset, PresetKeyChannelID)
 		logData.SubChannelID = extractStringProperty(preset, PresetKeySubChannelID)
-		logData.IP = extractStringProperty(properties, PresetKeyIP)
+		logData.IP = extractStringProperty(preset, PresetKeyIP)
 	}
 	return p.writer.Write(logData)
 }
