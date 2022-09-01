@@ -4,12 +4,12 @@ package ruixuego
 
 // IMSLoginReq 登录请求参数
 type IMSLoginReq struct {
-	UserID     string `json:"userid"`      // 用户在某 CP 下的唯一标识符
+	UserID     string `json:"user_id"`     // 用户在某 CP 下的唯一标识符
 	ProductID  string `json:"product_id"`  // 产品 ID
 	ChannelID  string `json:"channel_id"`  // 渠道 ID
 	DeviceCode string `json:"device_code"` // 设备码
 	CPID       uint32 `json:"cpid"`        // CPID
-	ClientType int32  `json:"clienttype"`  // 客户端类型
+	ClientType int32  `json:"client_type"` // 客户端类型
 }
 
 // IMSLoginResp 登录响应参数
