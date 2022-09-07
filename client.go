@@ -521,6 +521,20 @@ func (c *Client) IMSLogin(req *IMSLoginReq) (*IMSLoginResp, error) {
 func (c *Client) IMSSendMessage(req *IMSMessage) (*IMSMessageAck, error) {
 	ret := &IMSMessageAck{}
 	resp := &response{Data: ret}
+	if req.MilliTS == 0 {
+		req.MilliTS = time.Now().UnixMilli()
+	}
+	if req.UUID == "" {
+		req.UUID = uuid.New().String()
+	}
+	convType, _, ok := IMSParseConversationID(req.ConversationID)
+	if !ok {
+		return nil, ErrInvalidIMSConversationID
+	}
+	if req.ConvType == 0 {
+		req.ConvType = convType
+	}
+	req.CPID = config.CPID
 	err := c.queryAndCheckResponse(apiIMSSendMessage, req, resp)
 	return ret, err
 }

@@ -3,6 +3,7 @@ module git.jiaxianghudong.com/ruixuesdk/ruixuego
 go 1.17
 
 require (
+	git.jiaxianghudong.com/ruixue/consts v0.0.0-20220906081136-75ade40c2a1d
 	github.com/google/uuid v1.3.0
 	github.com/json-iterator/go v1.1.12
 	github.com/valyala/fasthttp v1.31.0
