@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"git.jiaxianghudong.com/ruixue/consts"
 	"github.com/google/uuid"
 )
 
@@ -124,7 +123,7 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 		logData.CPID = config.CPID
 	}
 	if logData.PlatformID <= 0 {
-		logData.PlatformID = consts.PlatformIDServerSDK
+		logData.PlatformID = 10
 	}
 	if logData.UUID == "" {
 		logData.UUID = uuid.New().String()
