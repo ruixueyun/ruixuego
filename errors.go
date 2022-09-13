@@ -5,13 +5,14 @@ package ruixuego
 import "errors"
 
 var (
-	ErrInvalidDevicecode = errors.New("invalid devicecode or distinctid")
-	ErrInvalidEvent      = errors.New("invalid event")
-	ErrInvalidCPID       = errors.New("invalid cpid")
-	ErrInvalidOpenID     = errors.New("invalid openid")
-	ErrInvalidAppID      = errors.New("invalid appid")
-	ErrAppKeyNotExistx   = errors.New("appkey not exists")
-	ErrInvalidType       = errors.New("invalid type")
+	ErrInvalidDevicecode        = errors.New("invalid devicecode or distinctid")
+	ErrInvalidEvent             = errors.New("invalid event")
+	ErrInvalidCPID              = errors.New("invalid cpid")
+	ErrInvalidOpenID            = errors.New("invalid openid")
+	ErrInvalidAppID             = errors.New("invalid appid")
+	ErrAppKeyNotExistx          = errors.New("appkey not exists")
+	ErrInvalidType              = errors.New("invalid type")
+	ErrInvalidIMSConversationID = errors.New("invalid ims conversation id")
 
 	errProducerShutdown = errors.New("producer already shut down")
 )
