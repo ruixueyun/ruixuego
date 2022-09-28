@@ -32,7 +32,7 @@ type batchWriter struct {
 }
 
 func (bw *batchWriter) Init() error {
-	if bw.conf.AutoFlush {
+	if !bw.conf.AutoFlush {
 		return nil
 	}
 	go func() {
@@ -42,7 +42,9 @@ func (bw *batchWriter) Init() error {
 			select {
 			case <-ticker.C:
 				err := bw.Flush()
-				logger.Errorf(err.Error())
+				if err != nil {
+					logger.Errorf(err.Error())
+				}
 			case <-bw.closed:
 				return
 			}
