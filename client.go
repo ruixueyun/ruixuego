@@ -54,6 +54,7 @@ const (
 	apiIMSLeaveConversation          = "/v1/ims/server/leaveconversation"
 	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
 	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
+	apiPusherPush                    = "/v1/pusher/push/push"
 )
 
 var defaultClient *Client
@@ -582,4 +583,10 @@ func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IM
 	resp := &response{Data: &ret}
 	err := c.queryAndCheckResponse(apiIMSConversationUserList, req, resp)
 	return ret, err
+}
+
+// PusherPush 推送信息
+func (c *Client) PusherPush(req *PusherPushReq) error {
+
+	return c.queryAndCheckResponse(apiPusherPush, req, nil)
 }
