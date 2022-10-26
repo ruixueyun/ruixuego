@@ -4,14 +4,15 @@ package main
 
 import (
 	"fmt"
-
 	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
+	"time"
 )
 
 const (
 	testAppID     = "wltestapp"
 	testChannelID = "wltestchannel"
 	testAppKey    = "a463deade4b15d5ac5398f97cdaeab65"
+	rankID        = "0_200_202_dayly"
 )
 
 func main() {
@@ -52,6 +53,40 @@ func main() {
 	// if err != nil {
 	// 	panic(err)
 	// }
+
+	err = ruixuego.GetDefaultClient().CreateRank(rankID, time.Now(), time.Now().Add(10*time.Hour*24))
+	if err != nil {
+		panic(err)
+	}
+
+	err = ruixuego.GetDefaultClient().RankAddScore(rankID, "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP", 1000)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ruixuego.GetDefaultClient().RankSetScore(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", 5000)
+	if err != nil {
+		panic(err)
+	}
+
+	rankMember, err := ruixuego.GetDefaultClient().QueryUserRank(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("QueryUserRank --> rank:%+v\n", rankMember)
+
+	rankList, err := ruixuego.GetDefaultClient().GetRankList(rankID)
+	if err != nil {
+		panic(err)
+	}
+	for _, rank := range rankList {
+		fmt.Printf("rankList --> rank:%+v\n", rank)
+	}
+
+	err = ruixuego.GetDefaultClient().CloseRank(rankID)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Println("done")
 }
