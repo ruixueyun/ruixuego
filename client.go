@@ -596,30 +596,28 @@ func (c *Client) PusherPush(req *PusherPushReq) error {
 	return c.queryAndCheckResponse(apiPusherPush, req, nil)
 }
 
-func (c *Client) RiskGreenSyncScan(req *IMSLoginReq) (*IMSLoginResp, error) {
-	ret := &IMSLoginResp{}
+func (c *Client) RiskGreenSyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, req, resp)
 	return ret, err
 }
 
 func (c *Client) RiskGreenAsyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
-	ret := &IMSLoginResp{}
+	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, req, resp)
 	return ret, err
 }
 
-func (c *Client) RiskGreenGetScanRes(req *IMSLoginReq) (*IMSLoginResp, error) {
-	ret := &IMSLoginResp{}
+func (c *Client) RiskGreenGetScanRes(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, req, resp)
 	return ret, err
 }
 
-func (c *Client) RiskGreenFeedback(req *IMSLoginReq) (*IMSLoginResp, error) {
-	ret := &IMSLoginResp{}
-	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenFeedback, req, resp)
-	return ret, err
+func (c *Client) RiskGreenFeedback(req *GreenFeedbackRequest) error {
+	err := c.queryAndCheckResponse(apiRiskGreenFeedback, req, nil)
+	return err
 }
