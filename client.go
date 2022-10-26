@@ -714,28 +714,42 @@ func (c *Client) PusherPush(req *PusherPushReq) error {
 	return c.queryAndCheckResponse(apiPusherPush, req, nil)
 }
 
-func (c *Client) RiskGreenSyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
 	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, req, resp)
+	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, &GreenRequest{
+		Scenes: scenes,
+		Tasks:  tasks,
+		Extend: extend,
+	}, resp)
 	return ret, err
 }
 
-func (c *Client) RiskGreenAsyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
 	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, req, resp)
+	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, &GreenRequest{
+		Scenes: scenes,
+		Tasks:  tasks,
+		Extend: extend,
+	}, resp)
 	return ret, err
 }
 
-func (c *Client) RiskGreenGetScanRes(req *GreenRequest) (*GreenUsercaseResult, error) {
+func (c *Client) RiskGreenGetScanRes(taskID []string) (*GreenUsercaseResult, error) {
 	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, req, resp)
+	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, &GreenRequest{
+		TaskID: taskID,
+	}, resp)
 	return ret, err
 }
 
-func (c *Client) RiskGreenFeedback(req *GreenFeedbackRequest) error {
-	err := c.queryAndCheckResponse(apiRiskGreenFeedback, req, nil)
+func (c *Client) RiskGreenFeedback(taskID, url string, results map[string]string) error {
+	err := c.queryAndCheckResponse(apiRiskGreenFeedback, &GreenFeedbackRequest{
+		TaskID:  taskID,
+		URL:     url,
+		Results: results,
+	}, nil)
 	return err
 }
