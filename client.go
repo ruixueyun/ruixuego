@@ -27,22 +27,31 @@ const (
 )
 
 const (
-	apiSetUserInfo                   = "/v1/social/serverapi/setuserinfo"
-	apiSetCustom                     = "/v1/social/serverapi/setcustom"
-	apiAddRelation                   = "/v1/social/serverapi/addrelation"
-	apiDelRelation                   = "/v1/social/serverapi/deleterelation"
-	apiUpdateRelationRemarks         = "/v1/social/serverapi/updaterelationremarks"
-	apiRelationList                  = "/v1/social/serverapi/relationlist"
-	apiHasRelation                   = "/v1/social/serverapi/hasrelation"
-	apiAddFriend                     = "/v1/social/serverapi/addfriend"
-	apiDelFriend                     = "/v1/social/serverapi/delfriend"
-	apiUpdateFriendRemarks           = "/v1/social/serverapi/updatefriendremarks"
-	apiFriendList                    = "/v1/social/serverapi/friendlist"
-	apiIsFriend                      = "/v1/social/serverapi/isfriend"
-	apiLBSUpdate                     = "/v1/social/serverapi/lbsupdate"
-	apiLBSDelete                     = "/v1/social/serverapi/lbsdelete"
-	apiLBSRadius                     = "/v1/social/serverapi/lbsradius"
-	apiBigDataTrack                  = "/v1/data/api/track"
+	apiSetUserInfo           = "/v1/social/serverapi/setuserinfo"
+	apiSetCustom             = "/v1/social/serverapi/setcustom"
+	apiAddRelation           = "/v1/social/serverapi/addrelation"
+	apiDelRelation           = "/v1/social/serverapi/deleterelation"
+	apiUpdateRelationRemarks = "/v1/social/serverapi/updaterelationremarks"
+	apiRelationList          = "/v1/social/serverapi/relationlist"
+	apiHasRelation           = "/v1/social/serverapi/hasrelation"
+	apiAddFriend             = "/v1/social/serverapi/addfriend"
+	apiDelFriend             = "/v1/social/serverapi/delfriend"
+	apiUpdateFriendRemarks   = "/v1/social/serverapi/updatefriendremarks"
+	apiFriendList            = "/v1/social/serverapi/friendlist"
+	apiIsFriend              = "/v1/social/serverapi/isfriend"
+	apiLBSUpdate             = "/v1/social/serverapi/lbsupdate"
+	apiLBSDelete             = "/v1/social/serverapi/lbsdelete"
+	apiLBSRadius             = "/v1/social/serverapi/lbsradius"
+	apiCreateRank            = "/v1/social/serverapi/createrank"
+	apiCloseRank             = "/v1/social/serverapi/closerank"
+	apiRankAddScore          = "/v1/social/serverapi/rankaddscore"
+	apiRankSetScore          = "/v1/social/serverapi/ranksetscore"
+	apiQueryUserRank         = "/v1/social/serverapi/queryuserrank"
+	apiGetRankList           = "/v1/social/serverapi/getranklist"
+	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
+
+	apiBigDataTrack = "/v1/data/api/track"
+
 	apiIMSLogin                      = "/v1/ims/server/login"
 	apiIMSSendMessage                = "/v1/ims/server/sendmessage"
 	apiIMSGetHistory                 = "/v1/ims/server/gethistory"
@@ -54,7 +63,13 @@ const (
 	apiIMSLeaveConversation          = "/v1/ims/server/leaveconversation"
 	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
 	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
-	apiPusherPush                    = "/v1/pusher/push/push"
+
+	apiPusherPush = "/v1/pusher/push/push"
+
+	apiRiskGreenSyncScan      = "/v1/risk/green/img/syncscan"
+	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
+	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
+	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
 )
 
 var defaultClient *Client
@@ -512,6 +527,114 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	return code, nil
 }
 
+// CreateRank 创建排行榜
+func (c *Client) CreateRank(rankID string, startTime, destroyTime time.Time) error {
+	if rankID == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiCreateRank, &rankAPIArg{
+		RankID:      rankID,
+		StartTime:   startTime.Format(time.RFC3339),
+		DestroyTime: destroyTime.Format(time.RFC3339),
+	}, nil)
+
+	return err
+}
+
+// CloseRank 关闭排行榜
+func (c *Client) CloseRank(rankID string) error {
+	if rankID == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiCloseRank, &rankAPIArg{
+		RankID: rankID,
+	}, nil)
+
+	return err
+}
+
+// RankAddScore 用户添加分数
+func (c *Client) RankAddScore(rankID string, openId string, score int64) error {
+	if rankID == "" || openId == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiRankAddScore, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
+		Score:  score,
+	}, nil)
+
+	return err
+}
+
+// RankSetScore 用户设置分数
+func (c *Client) RankSetScore(rankID string, openId string, score int64) error {
+	if rankID == "" || openId == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiRankSetScore, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
+		Score:  score,
+	}, nil)
+
+	return err
+}
+
+// QueryUserRank 查询用户排行情况
+func (c *Client) QueryUserRank(rankID string, openId string) (*RankMember, error) {
+	if rankID == "" || openId == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	ret := &RankMember{}
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiQueryUserRank, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
+	}, resp)
+
+	return ret, err
+}
+
+// GetRankList 查询排行榜
+func (c *Client) GetRankList(rankID string) ([]*RankMember, error) {
+	if rankID == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	var ret []*RankMember
+	resp := &response{Data: &ret}
+
+	err := c.queryAndCheckResponse(apiGetRankList, &rankAPIArg{
+		RankID: rankID,
+	}, resp)
+
+	return ret, err
+}
+
+// GetFriendRankList 查询好友排行榜
+func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember, error) {
+	if rankID == "" || openId == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	ret := make([]*RankMember, 0)
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiFriendsRank, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
+	}, resp)
+
+	return ret, err
+}
+
 func (c *Client) IMSLogin(req *IMSLoginReq) (*IMSLoginResp, error) {
 	ret := &IMSLoginResp{}
 	resp := &response{Data: ret}
@@ -589,4 +712,30 @@ func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IM
 func (c *Client) PusherPush(req *PusherPushReq) error {
 
 	return c.queryAndCheckResponse(apiPusherPush, req, nil)
+}
+
+func (c *Client) RiskGreenSyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &GreenUsercaseResult{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenAsyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &GreenUsercaseResult{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenGetScanRes(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &GreenUsercaseResult{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenFeedback(req *GreenFeedbackRequest) error {
+	err := c.queryAndCheckResponse(apiRiskGreenFeedback, req, nil)
+	return err
 }
