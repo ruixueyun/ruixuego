@@ -3,13 +3,13 @@ module git.jiaxianghudong.com/ruixuesdk/ruixuego
 go 1.17
 
 require (
-	git.jiaxianghudong.com/ruixue/consts v0.0.0-20220906081136-75ade40c2a1d
 	github.com/google/uuid v1.3.0
 	github.com/json-iterator/go v1.1.12
 	github.com/valyala/fasthttp v1.31.0
 )
 
 require (
+	git.jiaxianghudong.com/ruixue/consts v0.0.0-20221018023417-d12e3caad577 // indirect
 	github.com/andybalholm/brotli v1.0.2 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

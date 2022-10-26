@@ -55,6 +55,11 @@ const (
 	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
 	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
 	apiPusherPush                    = "/v1/pusher/push/push"
+
+	apiRiskGreenSyncScan      = "/v1/risk/green/img/syncscan"
+	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
+	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
+	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
 )
 
 var defaultClient *Client
@@ -589,4 +594,32 @@ func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IM
 func (c *Client) PusherPush(req *PusherPushReq) error {
 
 	return c.queryAndCheckResponse(apiPusherPush, req, nil)
+}
+
+func (c *Client) RiskGreenSyncScan(req *IMSLoginReq) (*IMSLoginResp, error) {
+	ret := &IMSLoginResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenAsyncScan(req *GreenRequest) (*GreenUsercaseResult, error) {
+	ret := &IMSLoginResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenGetScanRes(req *IMSLoginReq) (*IMSLoginResp, error) {
+	ret := &IMSLoginResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, req, resp)
+	return ret, err
+}
+
+func (c *Client) RiskGreenFeedback(req *IMSLoginReq) (*IMSLoginResp, error) {
+	ret := &IMSLoginResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenFeedback, req, resp)
+	return ret, err
 }
