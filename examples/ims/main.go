@@ -13,11 +13,13 @@ const (
 	testChannelID = "test_channel"
 )
 
+//apiDomain = "https://rx-api.weilemks.com"
+
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "https://ruixue.weiletest.com",
-		CPKey:     "f3c7907d161764daf97fdaaea1a72261",
-		CPID:      1000000,
+		APIDomain: "https://rx-api.weilemks.com",
+		CPKey:     "236ad548c691522990bafb4990291a53",
+		CPID:      1000005,
 	})
 	if err != nil {
 		panic(err)
