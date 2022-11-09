@@ -94,7 +94,7 @@ func main() {
 	}
 	tasks = append(tasks, task)
 
-	resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "")
+	resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "", "")
 	if err != nil {
 		panic(err)
 	}
