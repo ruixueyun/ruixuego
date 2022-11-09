@@ -13,7 +13,7 @@
 通过 `go mod` 引入 SDK
 
 ```shell
-go get git.jiaxianghudong.com/ruixuesdk/ruixuego
+go get ruixuego
 ```
 
 ```go
@@ -22,7 +22,7 @@ package main
 import (
 	"fmt"
 
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
+	"ruixuego"
 )
 
 const (
