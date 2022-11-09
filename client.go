@@ -728,16 +728,17 @@ func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, e
 	return ret, err
 }
 
-func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
+func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, extend string, callback string) (*GreenUsercaseResult, error) {
 	if len(scenes) <= 0 || len(tasks) <= 0 {
 		return nil, ErrInvalidOpenID
 	}
 	ret := &GreenUsercaseResult{}
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, &GreenRequest{
-		Scenes: scenes,
-		Tasks:  tasks,
-		Extend: extend,
+		Scenes:     scenes,
+		Tasks:      tasks,
+		Extend:     extend,
+		CPCallback: callback,
 	}, resp)
 	return ret, err
 }

@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+
 	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
 )
 
@@ -21,9 +22,9 @@ func main() {
 		CPKey:     "4c6d8d2af29e1fbda9e1fc992df13141",
 		CPID:      1000000,
 	})
-	if err != nil {
-		panic(err)
-	}
+	//if err != nil {
+	//	panic(err)
+	//}
 	//err = ruixuego.GetDefaultClient().SetCustom(testAppID, "rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "123")
 	//if err != nil {
 	//	panic(err)
@@ -94,12 +95,12 @@ func main() {
 	}
 	tasks = append(tasks, task)
 
-	resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "")
+	resp, err := ruixuego.GetDefaultClient().RiskGreenSyncScan([]string{"porn", "terrorism"}, tasks, "")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("resp +", resp)
+	fmt.Printf("resp :%+v", resp.Results[0])
 
 	fmt.Println("done")
 }
