@@ -43,7 +43,7 @@ type IMSMessage struct {
 	ProductID      string            `json:"product_id,omitempty"`
 	ChannelID      string            `json:"channel_id,omitempty"`
 	Content        string            `json:"content,omitempty"`
-	Ext            map[string]string `json:"milextli_ts,omitempty"`
+	Ext            map[string]string `json:"ext,omitempty"`
 	IMSExt         map[string]string `json:"ims_ext,omitempty"`
 }
 

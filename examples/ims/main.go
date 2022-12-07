@@ -17,9 +17,9 @@ const (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "https://rx-api.weilemks.com",
-		CPKey:     "236ad548c691522990bafb4990291a53",
-		CPID:      1000005,
+		APIDomain: "https://ruixue.weiletest.com",
+		CPKey:     "4c6d8d2af29e1fbda9e1fc992df13141",
+		CPID:      1000000,
 	})
 	if err != nil {
 		panic(err)
@@ -28,10 +28,15 @@ func main() {
 	ack, err := ruixuego.GetDefaultClient().IMSSendMessage(&ruixuego.IMSMessage{
 		Option:         3,
 		Type:           2,
+		Sender:         "testkk2012",
+		UUID:           "34567890991",
+		ClientType:     256,
 		ConversationID: "$4$worldChannel",
+		ConvType:       4,
 		ProductID:      testAppID,
 		ChannelID:      testChannelID,
-		Content:        "{\"text\":\"message content\"}",
+		Content:        "{\"text\":\"22222\"}",
+		Ext:            map[string]string{"userData": "{\"game\" : \"22222\"}"},
 	})
 	if err != nil {
 		panic(err)
