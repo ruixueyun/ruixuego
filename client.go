@@ -24,6 +24,8 @@ const (
 	headerSign      = "ruixue-cpsign"
 	headerVersion   = "ruixue-version"
 	headerDataCount = "ruixue-datacount"
+	headerProductID = "ruixue-productid"
+	headerChannelID = "ruixue-channelid"
 )
 
 const (
@@ -206,6 +208,38 @@ func (c *Client) checkResponse(resp *response) error {
 		return fmt.Errorf("[%d] %s", resp.Code, resp.Msg)
 	}
 	return nil
+}
+func (c *Client) queryAndCheckResponseWithProductIDAndChannelID(
+	path string, req interface{}, resp *response, productID, channelID string, compress ...bool) error {
+
+	if resp == nil {
+		resp = &response{}
+	}
+
+	traceID, err := c.queryWithProductIDAndChannelID(path, req, resp, productID, channelID, compress...)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	err = c.checkResponse(resp)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	return nil
+}
+func (c *Client) queryWithProductIDAndChannelID(
+	path string, arg, ret interface{}, productID, channelID string, compress ...bool) (string, error) {
+	traceID, req := c.getRequest()
+	c.queryAddProductIDAndChannelID(req, productID, channelID)
+	_, err := c.queryCode(path, req, config.Timeout, arg, ret, compress...)
+	return traceID, err
+}
+func (c *Client) queryAddProductIDAndChannelID(
+	req *fasthttp.Request, productID, channelID string) {
+	req.Header.Add(headerProductID, productID)
+	req.Header.Add(headerChannelID, channelID)
+
 }
 
 // SetUserInfo 设置用户信息
@@ -709,9 +743,9 @@ func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IM
 }
 
 // PusherPush 推送信息
-func (c *Client) PusherPush(req *PusherPushReq) error {
+func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) error {
 
-	return c.queryAndCheckResponse(apiPusherPush, req, nil)
+	return c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, nil, productID, channelID)
 }
 
 func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
