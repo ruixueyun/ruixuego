@@ -25,6 +25,7 @@ type Config struct {
 	Concurrency  int                          `yaml:"concurrency" json:"concurrency"`     // 并发请求限制
 	CPID         uint32                       `yaml:"cpid" json:"cpid"`
 	CPKey        string                       `yaml:"cpkey" json:"cpkey"`
+	ProductID    string                       `yaml:"product_id" json:"product_id"`
 	BigData      *BigDataConfig               `yaml:"bigdata" json:"bigdata"`
 	_done        bool
 }

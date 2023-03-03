@@ -114,6 +114,7 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerVersion, Version)
 	req.Header.Add(headerTraceID, traceID)
 	req.Header.Add(headerCPID, cpID)
+	req.Header.Add(headerProductID, config.ProductID)
 	req.Header.Add(headerTimestamp, ts)
 	if len(withoutSign) == 0 {
 		req.Header.Add(headerSign, GetSign(traceID, ts))
