@@ -49,6 +49,7 @@ const (
 	apiQueryUserRank         = "/v1/social/serverapi/queryuserrank"
 	apiGetRankList           = "/v1/social/serverapi/getranklist"
 	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
+	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
 
 	apiBigDataTrack = "/v1/data/api/track"
 
@@ -407,6 +408,28 @@ func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
 	}
 
 	return ret, nil
+}
+
+// GetRelationUser 查询好友信息
+func (c *Client) GetRelationUser(typ, openID, targetOpenID string) (*RelationUser, error) {
+	if openID == "" || targetOpenID == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	if typ == "" {
+		return nil, ErrInvalidType
+	}
+
+	ret := &RelationUser{}
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiGetRealtionUser, &argRelation{
+		OpenID: openID,
+		Target: targetOpenID,
+		Type:   typ,
+	}, resp)
+
+	return ret, err
 }
 
 // IsFriend 判断 Target 是否为 User 的好友
