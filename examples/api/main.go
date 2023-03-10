@@ -4,7 +4,8 @@ package main
 
 import (
 	"fmt"
-	"ruixuego"
+
+	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
 )
 
 const (
