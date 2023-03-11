@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego"
+	"ruixuego"
 )
 
 func main() {

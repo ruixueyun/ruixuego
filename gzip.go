@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bufferpool"
+	"ruixuego/bufferpool"
 )
 
 var _gzip = &gzipPool{}

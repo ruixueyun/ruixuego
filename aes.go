@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"io"
 
-	"git.jiaxianghudong.com/ruixuesdk/ruixuego/bytepool"
+	"ruixuego/bytepool"
 )
 
 var (
