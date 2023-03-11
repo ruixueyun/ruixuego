@@ -4,7 +4,8 @@ package main
 
 import (
 	"fmt"
-	"ruixuego"
+
+	"github.com/ruixueyun/ruixuego"
 )
 
 const (
@@ -24,68 +25,68 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//err = ruixuego.GetDefaultClient().SetCustom(testAppID, "rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "123")
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().SetCustom(testAppID, "rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "123")
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//err = ruixuego.GetDefaultClient().AddFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl", "aaaa1", "bbb13")
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().AddFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl", "aaaa1", "bbb13")
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//ret, err := ruixuego.GetDefaultClient().FriendList("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR")
-	//if err != nil {
+	// ret, err := ruixuego.GetDefaultClient().FriendList("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR")
+	// if err != nil {
 	//	panic(err)
-	//}
-	//for _, ru := range ret {
+	// }
+	// for _, ru := range ret {
 	//	fmt.Printf("%+v\n", ru)
-	//}
+	// }
 	//
-	//yes, err := ruixuego.GetDefaultClient().IsFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl")
-	//if err != nil {
+	// yes, err := ruixuego.GetDefaultClient().IsFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl")
+	// if err != nil {
 	//	panic(err)
-	//}
-	//fmt.Println(yes)
+	// }
+	// fmt.Println(yes)
 
 	// err = ruixuego.GetDefaultClient().DelFriend("rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "rxufPJeZoyrX3eWuNxLMSNK5N6x04jLl")
 	// if err != nil {
 	// 	panic(err)
 	// }
 
-	//err = ruixuego.GetDefaultClient().CreateRank(rankID, time.Now(), time.Now().Add(10*time.Hour*24))
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().CreateRank(rankID, time.Now(), time.Now().Add(10*time.Hour*24))
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//err = ruixuego.GetDefaultClient().RankAddScore(rankID, "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP", 1000)
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().RankAddScore(rankID, "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP", 1000)
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//err = ruixuego.GetDefaultClient().RankSetScore(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", 5000)
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().RankSetScore(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", 5000)
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//rankMember, err := ruixuego.GetDefaultClient().QueryUserRank(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej")
-	//if err != nil {
+	// rankMember, err := ruixuego.GetDefaultClient().QueryUserRank(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej")
+	// if err != nil {
 	//	panic(err)
-	//}
-	//fmt.Printf("QueryUserRank --> rank:%+v\n", rankMember)
+	// }
+	// fmt.Printf("QueryUserRank --> rank:%+v\n", rankMember)
 	//
-	//rankList, err := ruixuego.GetDefaultClient().GetRankList(rankID)
-	//if err != nil {
+	// rankList, err := ruixuego.GetDefaultClient().GetRankList(rankID)
+	// if err != nil {
 	//	panic(err)
-	//}
-	//for _, rank := range rankList {
+	// }
+	// for _, rank := range rankList {
 	//	fmt.Printf("rankList --> rank:%+v\n", rank)
-	//}
+	// }
 	//
-	//err = ruixuego.GetDefaultClient().CloseRank(rankID)
-	//if err != nil {
+	// err = ruixuego.GetDefaultClient().CloseRank(rankID)
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 
 	tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
 	task := &ruixuego.GreenRequestTask{

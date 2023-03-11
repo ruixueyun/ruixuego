@@ -1,4 +1,4 @@
-module ruixuego
+module github.com/ruixueyun/ruixuego
 
 go 1.17
 
