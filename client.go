@@ -69,6 +69,7 @@ const (
 
 	apiPusherPush = "/v1/pusher/push/push"
 
+	apiRiskSensitive          = "/v1/risk/sensitive"
 	apiRiskGreenSyncScan      = "/v1/risk/green/img/syncscan"
 	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
 	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
@@ -823,4 +824,17 @@ func (c *Client) RiskGreenFeedback(taskID, url string, results map[string]string
 		Results: results,
 	}, nil)
 	return err
+}
+
+func (c *Client) RiskSensitive(content string) (*SensitiveResponse, error) {
+	if len(content) <= 0 {
+		return nil, ErrInvalidParam
+	}
+	req := &SensitiveReq{
+		Content: content,
+	}
+	ret := &SensitiveResponse{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskSensitive, req, resp)
+	return ret, err
 }

@@ -66,3 +66,14 @@ type (
 		Extend  string                     `json:"extend,omitempty"`
 	}
 )
+
+// SensitiveReq 敏感词检测请求
+type SensitiveReq struct {
+	Content string `json:"check_words"` // 需要检测的语句
+}
+
+// SensitiveResponse 敏感词检测返回
+type SensitiveResponse struct {
+	Content        string   `json:"content"`         // 返回去敏感词的语句
+	SensitiveWords []string `json:"sensitive_words"` // 敏感词
+}

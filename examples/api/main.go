@@ -16,7 +16,7 @@ const (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "https://api.demo.ruixueyun.com",
+		APIDomain: "https://ruixue.weiletest.com",
 		AppKeys:   map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
 		CPKey:     "4c6d8d2af29e1fbda9e1fc992df13141",
 		CPID:      1000000,
@@ -87,19 +87,26 @@ func main() {
 	//	panic(err)
 	//}
 
-	tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
-	task := &ruixuego.GreenRequestTask{
-		Tag: 123456,
-		URL: "https://oss.ruixueyun.com/image/testuser1_6666_24df451ef7f1d500af8d71b2028f9567.jpeg",
-	}
-	tasks = append(tasks, task)
+	//tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
+	//task := &ruixuego.GreenRequestTask{
+	//	Tag: 123456,
+	//	URL: "https://oss.ruixueyun.com/image/testuser1_6666_24df451ef7f1d500af8d71b2028f9567.jpeg",
+	//}
+	//tasks = append(tasks, task)
+	//
+	//resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "", "")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//fmt.Println("resp +", resp)
+	//
+	//fmt.Println("done")
 
-	resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "", "")
+	resp, err := ruixuego.GetDefaultClient().RiskSensitive("你好我是毛泽东")
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println("resp +", resp)
 
-	fmt.Println("done")
 }

@@ -13,6 +13,7 @@ var (
 	ErrAppKeyNotExistx          = errors.New("appkey not exists")
 	ErrInvalidType              = errors.New("invalid type")
 	ErrInvalidIMSConversationID = errors.New("invalid ims conversation id")
+	ErrInvalidParam             = errors.New("invalid param")
 
 	errProducerShutdown = errors.New("producer already shut down")
 )
