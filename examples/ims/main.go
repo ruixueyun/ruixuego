@@ -4,7 +4,8 @@ package main
 
 import (
 	"fmt"
-	"ruixuego"
+
+	"github.com/ruixueyun/ruixuego"
 )
 
 const (
@@ -12,7 +13,7 @@ const (
 	testChannelID = "test_channel"
 )
 
-//apiDomain = "https://rx-api.weilemks.com"
+// apiDomain = "https://rx-api.weilemks.com"
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
@@ -25,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	//ack, err := ruixuego.GetDefaultClient().IMSSendMessage(&ruixuego.IMSMessage{
+	// ack, err := ruixuego.GetDefaultClient().IMSSendMessage(&ruixuego.IMSMessage{
 	//	Option:         3,
 	//	Type:           2,
 	//	Sender:         "testkk2012",
@@ -37,19 +38,19 @@ func main() {
 	//	ChannelID:      testChannelID,
 	//	Content:        "{\"text\":\"22222\"}",
 	//	Ext:            map[string]string{"userData": "{\"game\" : \"22222\"}"},
-	//})
-	//if err != nil {
+	// })
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//fmt.Printf("%+v\n", ack)
+	// fmt.Printf("%+v\n", ack)
 
-	//tuser, err := ruixuego.GetDefaultClient().GetRelationUser("pp", "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP")
-	//if err != nil {
+	// tuser, err := ruixuego.GetDefaultClient().GetRelationUser("pp", "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP")
+	// if err != nil {
 	//	panic(err)
-	//}
+	// }
 	//
-	//fmt.Printf("%+v\n", tuser)
+	// fmt.Printf("%+v\n", tuser)
 
 	tuser, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn"}, []*ruixuego.GreenRequestTask{{Tag: 1, URL: "https://oss.ruixueyun.com/image/4444_09ad12c35307b04e894290bf1a75d060.jpeg"}}, "1234", "")
 	if err != nil {

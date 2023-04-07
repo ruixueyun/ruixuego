@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"ruixuego/bufferpool"
+	"github.com/ruixueyun/ruixuego/bufferpool"
 
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"

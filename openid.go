@@ -3,6 +3,7 @@
 package ruixuego
 
 import (
+	jsonen "encoding/json"
 	"sync"
 	"time"
 )
@@ -19,14 +20,52 @@ var (
 
 // OpenIDData OpenID 加密 OpenID 数据定义
 type OpenIDData struct {
-	TraceID   string `json:"traceid,omitempty"`
-	AppID     string `json:"appid,omitempty"`
-	ChannelID string `json:"channelid,omitempty"`
-	Method    string `json:"method,omitempty"`
-	OpenID    string `json:"openid,omitempty"`
-	Ext       string `json:"ext,omitempty"`
-	TokenID   string `json:"tokenid,omitempty"`
-	Timestamp int64  `json:"ts,omitempty"`
+	TraceID       string         `json:"traceid,omitempty"`
+	AppID         string         `json:"appid,omitempty"`
+	ChannelID     string         `json:"channelid,omitempty"`
+	Method        string         `json:"method,omitempty"`
+	OpenID        string         `json:"openid,omitempty"`
+	Ext           string         `json:"ext,omitempty"`
+	TokenID       string         `json:"tokenid,omitempty"`
+	Timestamp     int64          `json:"ts,omitempty"`
+	AccountID     int64          `json:"accountid,omitempty"`
+	AccountDetail *AccountDetail `json:"accountdetail,omitempty"`
+}
+
+type AccountDetail struct {
+	CredentialType   string               `json:"credential_type"`
+	CredentialParams jsonen.RawMessage    `json:"credential_params"`
+	Identifier       *RXAccountIdentifier `json:"identifier"`
+	Info             *RXAccountInfo       `json:"info"`
+}
+
+type RXAccountIdentifier struct {
+	ID        int64  `json:"id"`
+	OpenID    string `json:"openid"`
+	RXVersion int    `json:"rxversion"`
+}
+
+type RXAccountInfo struct {
+	// 密码编码类型
+	PasswordType int32 `json:"password_type"`
+
+	Gender int8 `json:"gender"`
+
+	RegPlatformType int32 `json:"reg_platform_type"`
+
+	// 账号注册时间戳，秒
+	RegisteredAtTime int64 `json:"registered_at_time"`
+
+	UserID int64 `json:"userid"`
+
+	Password string `json:"password"`
+	NickName string `json:"nick_name"`
+	Avatar   string `json:"avatar"`
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+
+	RealName string `json:"real_name"`
+	IDCard   string `json:"idcard"`
 }
 
 func (data *OpenIDData) Release() {

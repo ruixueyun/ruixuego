@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"ruixuego"
+	"github.com/ruixueyun/ruixuego"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 			Type:   1, // 推送目标类型 0 全部设备 1 openid 2 openid列表
 			Openid: []string{"openid"},
 		},
-	}, "264", "204") //"264", "204")
+	}, "264", "204") // "264", "204")
 	if err != nil {
 		fmt.Println(err)
 	}

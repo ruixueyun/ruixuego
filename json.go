@@ -3,7 +3,7 @@
 package ruixuego
 
 import (
-	"ruixuego/bufferpool"
+	"github.com/ruixueyun/ruixuego/bufferpool"
 
 	jsoniter "github.com/json-iterator/go"
 )
