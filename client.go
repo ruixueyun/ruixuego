@@ -18,14 +18,15 @@ import (
 const defaultStatus = -1
 
 const (
-	headerTraceID   = "ruixue-traceid"
-	headerCPID      = "ruixue-cpid"
-	headerTimestamp = "ruixue-cpts"
-	headerSign      = "ruixue-cpsign"
-	headerVersion   = "ruixue-version"
-	headerDataCount = "ruixue-datacount"
-	headerProductID = "ruixue-productid"
-	headerChannelID = "ruixue-channelid"
+	headerTraceID     = "ruixue-traceid"
+	headerCPID        = "ruixue-cpid"
+	headerTimestamp   = "ruixue-cpts"
+	headerSign        = "ruixue-cpsign"
+	headerVersion     = "ruixue-version"
+	headerDataCount   = "ruixue-datacount"
+	headerProductID   = "ruixue-productid"
+	headerChannelID   = "ruixue-channelid"
+	headerServiceMark = "ruixue-servicemark" // 用于区分区服信息
 )
 
 const (
@@ -116,6 +117,7 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerTraceID, traceID)
 	req.Header.Add(headerCPID, cpID)
 	req.Header.Add(headerProductID, config.ProductID)
+	req.Header.Add(headerServiceMark, config.ServiceMark)
 	req.Header.Add(headerTimestamp, ts)
 	if len(withoutSign) == 0 {
 		req.Header.Add(headerSign, GetSign(traceID, ts))
