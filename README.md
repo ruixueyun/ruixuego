@@ -45,6 +45,7 @@ func main() {
 		BigData: &ruixuego.BigDataConfig{ // 要使用大数据埋点功能必须配置此参数
 			AutoFlush: true,
 		},
+		ServiceMark: "default", // 游戏服分区信息
 	})
 	if err != nil {
 		panic(err)
