@@ -696,6 +696,7 @@ func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember,
 	return ret, err
 }
 
+// IMSLogin ims 登陆接口
 func (c *Client) IMSLogin(req *IMSLoginReq) (*IMSLoginResp, error) {
 	ret := &IMSLoginResp{}
 	resp := &response{Data: ret}
@@ -703,6 +704,7 @@ func (c *Client) IMSLogin(req *IMSLoginReq) (*IMSLoginResp, error) {
 	return ret, err
 }
 
+// IMSSendMessage 发送消息
 func (c *Client) IMSSendMessage(req *IMSMessage) (*IMSMessageAck, error) {
 	ret := &IMSMessageAck{}
 	resp := &response{Data: ret}
@@ -724,6 +726,7 @@ func (c *Client) IMSSendMessage(req *IMSMessage) (*IMSMessageAck, error) {
 	return ret, err
 }
 
+// IMSGetHistory 获取历史记录
 func (c *Client) IMSGetHistory(req *IMSHistoryReq) (*IMSHistoryResp, error) {
 	ret := &IMSHistoryResp{}
 	resp := &response{Data: ret}
@@ -731,18 +734,22 @@ func (c *Client) IMSGetHistory(req *IMSHistoryReq) (*IMSHistoryResp, error) {
 	return ret, err
 }
 
+// IMSCreateConversation 创建会话
 func (c *Client) IMSCreateConversation(req *IMSCreateConvReq) error {
 	return c.queryAndCheckResponse(apiIMSCreateConversation, req, nil)
 }
 
+// IMSUpdateConversation 更新会话信息
 func (c *Client) IMSUpdateConversation(req *IMSUpdateConvReq) error {
 	return c.queryAndCheckResponse(apiIMSUpdateConversation, req, nil)
 }
 
+// IMSDeleteConversation 删除会话
 func (c *Client) IMSDeleteConversation(req *IMSConvDeleteReq) error {
 	return c.queryAndCheckResponse(apiIMSDeleteConversation, req, nil)
 }
 
+// IMSGetConversation 获取会话信息
 func (c *Client) IMSGetConversation(req *IMSGetConversationReq) (*IMSConversation, error) {
 	ret := &IMSConversation{}
 	resp := &response{Data: ret}
@@ -750,18 +757,22 @@ func (c *Client) IMSGetConversation(req *IMSGetConversationReq) (*IMSConversatio
 	return ret, err
 }
 
+// IMSJoinConversation 加入会话
 func (c *Client) IMSJoinConversation(req *IMSJoinConversationReq) error {
 	return c.queryAndCheckResponse(apiIMSJoinConversation, req, nil)
 }
 
+// IMSLeaveConversation 离开会话
 func (c *Client) IMSLeaveConversation(req *IMSLeaveConversationReq) error {
 	return c.queryAndCheckResponse(apiIMSLeaveConversation, req, nil)
 }
 
+// IMSUpdateConversationUserData 更新会话内用户信息
 func (c *Client) IMSUpdateConversationUserData(req *IMSUpdateConvUserDataReq) error {
 	return c.queryAndCheckResponse(apiIMSUpdateConversationUserData, req, nil)
 }
 
+// IMSConversationUserList 获取会话中成员列表
 func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IMSConversation, error) {
 	ret := make([]*IMSConversation, 0)
 	resp := &response{Data: &ret}
@@ -775,6 +786,7 @@ func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) err
 	return c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, nil, productID, channelID)
 }
 
+// RiskGreenSyncScan 内容安全图片检查同步获取结果
 func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
 	if len(scenes) <= 0 || len(tasks) <= 0 {
 		return nil, ErrInvalidOpenID
@@ -789,6 +801,7 @@ func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, e
 	return ret, err
 }
 
+// RiskGreenAsyncScan 内容安全图片检查异步获取结果
 func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, extend string, callback string) (*GreenUsercaseResult, error) {
 	if len(scenes) <= 0 || len(tasks) <= 0 {
 		return nil, ErrInvalidOpenID
@@ -804,6 +817,7 @@ func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, 
 	return ret, err
 }
 
+// RiskGreenGetScanRes 获取图片审核结果
 func (c *Client) RiskGreenGetScanRes(taskID []string) (*GreenUsercaseResult, error) {
 	if len(taskID) <= 0 {
 		return nil, ErrInvalidOpenID
@@ -816,6 +830,7 @@ func (c *Client) RiskGreenGetScanRes(taskID []string) (*GreenUsercaseResult, err
 	return ret, err
 }
 
+// RiskGreenFeedback 人工审核图片反馈结果
 func (c *Client) RiskGreenFeedback(taskID, url string, results map[string]string) error {
 	if len(url) <= 0 || len(results) <= 0 {
 		return ErrInvalidOpenID
@@ -828,6 +843,7 @@ func (c *Client) RiskGreenFeedback(taskID, url string, results map[string]string
 	return err
 }
 
+// RiskSensitive 敏感词检测
 func (c *Client) RiskSensitive(content string) (*SensitiveResponse, error) {
 	if len(content) <= 0 {
 		return nil, ErrInvalidParam
