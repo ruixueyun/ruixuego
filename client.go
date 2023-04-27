@@ -67,6 +67,7 @@ const (
 	apiIMSLeaveConversation          = "/v1/ims/server/leaveconversation"
 	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
 	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
+	apiIMSChannelUsersCount          = "/v1/ims/server/getchanneluserscount"
 
 	apiPusherPush = "/v1/pusher/push/push"
 
@@ -777,6 +778,19 @@ func (c *Client) IMSConversationUserList(req *IMSConversationUserListReq) ([]*IM
 	ret := make([]*IMSConversation, 0)
 	resp := &response{Data: &ret}
 	err := c.queryAndCheckResponse(apiIMSConversationUserList, req, resp)
+	return ret, err
+}
+
+// IMSChannelUsersCount 获取频道会话中玩家数量
+func (c *Client) IMSChannelUsersCount(channelConvIds []string) (map[string]int64, error) {
+	ret := make(map[string]int64)
+	resp := &response{Data: &ret}
+
+	req := &IMSChannelUsesCountReq{
+		ConversationIDs: channelConvIds,
+	}
+
+	err := c.queryAndCheckResponse(apiIMSChannelUsersCount, req, resp)
 	return ret, err
 }
 

@@ -156,3 +156,8 @@ type IMSUpdateConvUserDataReq struct {
 type IMSConversationUserListReq struct {
 	UserID string `json:"user_id"` // 用户 ID
 }
+
+// IMSChannelUsesCountReq 获取频道玩家数量
+type IMSChannelUsesCountReq struct {
+	ConversationIDs []string `json:"conversation_ids"`
+}

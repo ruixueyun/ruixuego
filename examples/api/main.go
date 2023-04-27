@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-
+	
 	"github.com/ruixueyun/ruixuego"
 )
 
@@ -17,10 +17,11 @@ const (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "https://ruixue.weiletest.com",
-		AppKeys:   map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
-		CPKey:     "4c6d8d2af29e1fbda9e1fc992df13141",
-		CPID:      1000000,
+		APIDomain:   "https://ruixue.weiletest.com",
+		AppKeys:     map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
+		CPKey:       "0984cde09ebe42fd167510c727f57f71",
+		CPID:        1000049,
+		ServiceMark: "aabbcc",
 	})
 	if err != nil {
 		panic(err)
@@ -59,10 +60,12 @@ func main() {
 	//	panic(err)
 	// }
 	//
-	// err = ruixuego.GetDefaultClient().RankAddScore(rankID, "rxufb2GKDBm5n4u7gYkcOLbOv7J4RrVP", 1000)
-	// if err != nil {
-	//	panic(err)
-	// }
+	ret, err := ruixuego.GetDefaultClient().IMSChannelUsersCount([]string{"$4$worldChannel"})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("IMSChannelUsersCount --> ret:%+v\n", ret)
+
 	//
 	// err = ruixuego.GetDefaultClient().RankSetScore(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", 5000)
 	// if err != nil {
@@ -88,6 +91,14 @@ func main() {
 	//	panic(err)
 	// }
 
+	//var loginOpenId = `HTFqREbcznvBQiUyANGmQ56T5KuGxoYw9EW/3kJiOhHeijQuQfePua6B5wT4V4NElFDtzDBiey/JWmdUWPAjgdvZizKXPN5UUW1cJP/mZqBfhdMxE0r1p6wyNOWB7960h5v4y2XHDJZhwihc3peES9FPSbGgpxvP90C7ASO6QmQPXBHQeP4xN33CLsM8BCplzWWNiiBCNHp8P3R+F/cxIrmPTQvuG9YkzZffjyMf9NwwdSz5i5lR35i7Lt4fwg1zwXPnNAWY4PtC2r5LwvyS3lUfm/wjjmUlMYwDfRrPP1VTLUdGQw5Sd7vx4lu73BrPdwOExkYlWpRVsfFjZP6Dyg==`
+	////var openId = "rxuCAMkg_9QojLHlybEClG74woeB6EK7"
+	//ruixuego.AddAESKey("100", "100", []byte("a0ac930adc99fed5b3467a47d757f907"))
+	//openIdData, err := ruixuego.DecryptOpenIDData("100", "100", loginOpenId)
+	//if err != nil {
+	//	panic(err)
+	//}
+
 	//tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
 	//task := &ruixuego.GreenRequestTask{
 	//	Tag: 123456,
@@ -95,19 +106,18 @@ func main() {
 	//}
 	//tasks = append(tasks, task)
 	//
-	//resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn", "terrorism"}, tasks, "", "")
+	//resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn"}, tasks, "", "")
 	//if err != nil {
 	//	panic(err)
 	//}
-	//
-	//fmt.Println("resp +", resp)
+	//fmt.Println("resp +", openIdData)
 	//
 	//fmt.Println("done")
 
-	resp, err := ruixuego.GetDefaultClient().RiskSensitive("你好我是毛泽东")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("resp +", resp)
+	//resp, err := ruixuego.GetDefaultClient().RiskSensitive("你好我是毛泽东")
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println("resp +", resp)
 
 }
