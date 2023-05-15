@@ -7,7 +7,8 @@ const (
 )
 
 // RelationTypes 自定义用户关系类型
-// 		map[自定义类型]是否为双向关系
+//
+//	map[自定义类型]是否为双向关系
 type RelationTypes map[string]bool
 
 type response struct {
@@ -95,4 +96,10 @@ type RankMember struct {
 	Score    int64         `json:"score"`
 	Rank     int64         `json:"rank"` // 玩家排名
 	UserInfo *RelationUser `json:"user,omitempty"`
+}
+
+// ReportCustomAction 投放归因上报自定义action
+type ReportCustomAction struct {
+	OpenID string `json:"open_id"`
+	Action string `json:"action"` // 上报行为
 }

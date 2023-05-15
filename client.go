@@ -76,6 +76,8 @@ const (
 	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
 	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
 	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
+
+	apiReportCustomAction = "/v1/attribution/user/custom_action"
 )
 
 var defaultClient *Client
@@ -869,4 +871,25 @@ func (c *Client) RiskSensitive(content string) (*SensitiveResponse, error) {
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskSensitive, req, resp)
 	return ret, err
+}
+
+// ReportCustomAction 投放归因上报自定义action， 例如广点通小游戏创角， action传 CREATE_ROLE
+// https://developers.e.qq.com/docs/guide/conversion/new_version/Mini_Game_api
+func (c *Client) ReportCustomAction(openID, action string) error {
+	if openID == "" || action == "" {
+		return ErrInvalidOpenID
+	}
+	arg := &ReportCustomAction{
+		OpenID: openID,
+		Action: action,
+	}
+	resp := &response{}
+	err := c.queryAndCheckResponse(apiReportCustomAction, arg, resp)
+	if err != nil {
+		return err
+	}
+	if resp.Code != 0 {
+		return fmt.Errorf(resp.Msg)
+	}
+	return nil
 }
