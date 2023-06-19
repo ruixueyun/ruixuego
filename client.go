@@ -76,6 +76,7 @@ const (
 	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
 	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
 	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
+	apiRiskGreenStrongScan    = "/v1/risk/green/img/strongscan"
 )
 
 var defaultClient *Client
@@ -868,5 +869,20 @@ func (c *Client) RiskSensitive(content string) (*SensitiveResponse, error) {
 	ret := &SensitiveResponse{}
 	resp := &response{Data: ret}
 	err := c.queryAndCheckResponse(apiRiskSensitive, req, resp)
+	return ret, err
+}
+
+// RiskGreenStrongScan 内容安全图片检查增强版
+func (c *Client) RiskGreenStrongScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
+	if len(scenes) <= 0 || len(tasks) <= 0 {
+		return nil, ErrInvalidOpenID
+	}
+	ret := &GreenUsercaseResult{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenStrongScan, &GreenRequest{
+		Scenes: scenes,
+		Tasks:  tasks,
+		Extend: extend,
+	}, resp)
 	return ret, err
 }

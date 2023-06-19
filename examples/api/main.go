@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	
+
 	"github.com/ruixueyun/ruixuego"
 )
 
@@ -60,11 +60,11 @@ func main() {
 	//	panic(err)
 	// }
 	//
-	ret, err := ruixuego.GetDefaultClient().IMSChannelUsersCount([]string{"$4$worldChannel"})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("IMSChannelUsersCount --> ret:%+v\n", ret)
+	//ret, err := ruixuego.GetDefaultClient().IMSChannelUsersCount([]string{"$4$worldChannel"})
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Printf("IMSChannelUsersCount --> ret:%+v\n", ret)
 
 	//
 	// err = ruixuego.GetDefaultClient().RankSetScore(rankID, "rxuSl4QZoNk0G1HY2-Za6GlO7wO-p_ej", 5000)
@@ -99,18 +99,18 @@ func main() {
 	//	panic(err)
 	//}
 
-	//tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
-	//task := &ruixuego.GreenRequestTask{
-	//	Tag: 123456,
-	//	URL: "https://oss.ruixueyun.com/image/testuser1_6666_24df451ef7f1d500af8d71b2028f9567.jpeg",
-	//}
-	//tasks = append(tasks, task)
-	//
-	//resp, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn"}, tasks, "", "")
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fmt.Println("resp +", openIdData)
+	tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
+	task := &ruixuego.GreenRequestTask{
+		Tag: 123456,
+		URL: "https://avatarfile.weile.com/temp/523872878-1687165437",
+	}
+	tasks = append(tasks, task)
+
+	resp, err := ruixuego.GetDefaultClient().RiskGreenStrongScan([]string{"baselineCheck_pro"}, tasks, "")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("resp +", resp.Results[0])
 	//
 	//fmt.Println("done")
 
