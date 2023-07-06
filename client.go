@@ -77,8 +77,8 @@ const (
 	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
 	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
 	apiRiskGreenStrongScan    = "/v1/risk/green/img/strongscan"
-
-	apiReportCustomAction = "/v1/attribution/user/custom_action"
+	apiRiskGreenWechatCheck   = "/v1/risk/sensitive/weixin_media/check"
+	apiReportCustomAction     = "/v1/attribution/user/custom_action"
 )
 
 var defaultClient *Client
@@ -885,6 +885,24 @@ func (c *Client) RiskGreenStrongScan(scenes []string, tasks []*GreenRequestTask,
 		Scenes: scenes,
 		Tasks:  tasks,
 		Extend: extend,
+	}, resp)
+	return ret, err
+}
+
+// RiskGreenWechatCheck 微信小游戏图片异步检测
+func (c *Client) RiskGreenWechatCheck(url string, scenes []string, openid string) (*WeiXinResp, error) {
+	if len(scenes) <= 0 || len(url) <= 0 {
+		return nil, ErrInvalidOpenID
+	}
+	ret := &WeiXinResp{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponse(apiRiskGreenWechatCheck, &WeiXinMediaCheckReq{
+		MediaURL:  url,
+		MediaType: 2,
+		Version:   2,
+		Scene:     1,
+		Openid:    openid,
+		Scenes:    scenes,
 	}, resp)
 	return ret, err
 }
