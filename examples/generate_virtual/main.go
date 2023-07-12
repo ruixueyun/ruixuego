@@ -15,7 +15,7 @@ func main() {
 	}
 
 	err = ruixuego.AddAESKey(
-		"wltestapp", "wltestapp", []byte("a463deade4b15d5ac5398f97cdaeab65"))
+		"wltestapp", "wltestapp", []byte("00000000000000000000000"))
 	if err != nil {
 		panic(err)
 	}

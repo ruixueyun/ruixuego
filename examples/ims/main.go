@@ -17,8 +17,8 @@ const (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "https://rxapi3.weilemks.com",
-		CPKey:     "236ad548c691522990bafb4990291a53",
+		APIDomain: "https://domain.com",
+		CPKey:     "00000000000000000000000",
 		CPID:      1000005,
 		ProductID: "425",
 	})

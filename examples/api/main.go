@@ -11,15 +11,15 @@ import (
 const (
 	testAppID     = "wltestapp"
 	testChannelID = "wltestchannel"
-	testAppKey    = "a463deade4b15d5ac5398f97cdaeab65"
+	testAppKey    = "00000000000000000000000"
 	rankID        = "0_200_202_dayly"
 )
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain:   "https://ruixue.weiletest.com",
+		APIDomain:   "https://domain.com",
 		AppKeys:     map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
-		CPKey:       "0984cde09ebe42fd167510c727f57f71",
+		CPKey:       "00000000000000000000000",
 		CPID:        1000049,
 		ServiceMark: "aabbcc",
 	})

@@ -10,8 +10,8 @@ import (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain: "http://ruixue.weiletest.com",
-		CPKey:     "4c6d8d2af29e1fbda9e1fc992df13141",
+		APIDomain: "http://domain.com",
+		CPKey:     "00000000000000000000000",
 		CPID:      1000049,
 	})
 

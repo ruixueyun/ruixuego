@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	err = ruixuego.AddAESKey("test", "test", []byte("098f6bcd4621d373cade4e832627b4f6"))
+	err = ruixuego.AddAESKey("test", "test", []byte("00000000000000000000000"))
 	if err != nil {
 		panic(err)
 	}
