@@ -14,6 +14,7 @@ var (
 	ErrInvalidType              = errors.New("invalid type")
 	ErrInvalidIMSConversationID = errors.New("invalid ims conversation id")
 	ErrInvalidParam             = errors.New("invalid param")
+	ErrInvalidCPuserID          = errors.New("invalid cp_user_id")
 
 	errProducerShutdown = errors.New("producer already shut down")
 )

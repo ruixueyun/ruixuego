@@ -79,6 +79,8 @@ const (
 	apiRiskGreenStrongScan    = "/v1/risk/green/img/strongscan"
 	apiRiskGreenCheck         = "/v1/risk/sensitive/media/check"
 	apiReportCustomAction     = "/v1/attribution/user/custom_action"
+
+	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
 )
 
 var defaultClient *Client
@@ -915,6 +917,25 @@ func (c *Client) ReportCustomAction(openID, action string) error {
 	}
 	resp := &response{}
 	err := c.queryAndCheckResponse(apiReportCustomAction, arg, resp)
+	if err != nil {
+		return err
+	}
+	if resp.Code != 0 {
+		return fmt.Errorf(resp.Msg)
+	}
+	return nil
+}
+
+// UpdateCPuserID 用于瑞雪侧更新cp侧的user_id
+func (c *Client) UpdateCPuserID(openID, cpUserID string) error {
+	if len(cpUserID) == 0 || len(openID) == 0 {
+		return ErrInvalidCPuserID
+	}
+	arg := &UpdateCPUserIDRequest{}
+	arg.OpenID = openID
+	arg.CPUserID = cpUserID
+	resp := &response{}
+	err := c.queryAndCheckResponse(apiPassportUpdateCPUserID, arg, resp)
 	if err != nil {
 		return err
 	}
