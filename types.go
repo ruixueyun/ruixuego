@@ -74,6 +74,8 @@ type rankAPIArg struct {
 	OpenID      string `json:"open_id,omitempty"`
 	StartTime   string `json:"start,omitempty"`
 	DestroyTime string `json:"destroy,omitempty"`
+	StartRank   int32  `json:"start_rank,omitempty"`
+	EndRank     int32  `json:"end_rank,omitempty"`
 }
 
 type RelationUser struct {

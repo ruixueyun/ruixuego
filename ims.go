@@ -75,7 +75,7 @@ type IMSCreateConvReq struct {
 	Option         int64             `json:"option,omitempty"`  // 会话选项
 	ConvType       int32             `json:"conv_type"`         // 会话类型
 	Creator        string            `json:"creator"`           // 会话创建者，即单聊的发起者或群的创建者
-	Members        []*MemberInfo     `json:"members,omitempty"` // 除创建者外该会话的其他参与者
+	Members        []*MemberInfo     `json:"members,omitempty"` // 会话的参与者，可以包括创建者
 	Ext            map[string]string `json:"ext,omitempty"`     // 该会话 CP 自定义扩展信息
 	IMSExt         map[string]string `json:"ims_ext,omitempty"` // 该会话 IMS 服务的扩展信息，不可更改
 }

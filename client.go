@@ -670,7 +670,7 @@ func (c *Client) QueryUserRank(rankID string, openId string) (*RankMember, error
 }
 
 // GetRankList 查询排行榜
-func (c *Client) GetRankList(rankID string) ([]*RankMember, error) {
+func (c *Client) GetRankList(rankID string, start, end int32) ([]*RankMember, error) {
 	if rankID == "" {
 		return nil, ErrInvalidOpenID
 	}
@@ -679,7 +679,9 @@ func (c *Client) GetRankList(rankID string) ([]*RankMember, error) {
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiGetRankList, &rankAPIArg{
-		RankID: rankID,
+		RankID:    rankID,
+		StartRank: start,
+		EndRank:   end,
 	}, resp)
 
 	return ret, err
