@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 	"time"
 
@@ -81,6 +82,8 @@ const (
 	apiReportCustomAction     = "/v1/attribution/user/custom_action"
 
 	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
+
+	apiSyncEventPublicAttr = "/v1/sdkconfig/sync/event_attrs"
 )
 
 var defaultClient *Client
@@ -95,6 +98,9 @@ func NewClient() (c *Client, err error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// 同步事件公共属性
+		SyncEventPublicAttr(c)
 	}
 	return c, nil
 }
@@ -130,6 +136,32 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	}
 
 	return traceID, req
+}
+
+func (c *Client) getAndCheckResponse(url string, args map[string]string, resp *response, compress ...bool) error {
+
+	if resp == nil {
+		resp = &response{}
+	}
+
+	dataValue := make(url2.Values)
+	for k, v := range args {
+		dataValue.Add(k, v)
+	}
+
+	uri := url + "?" + dataValue.Encode()
+
+	traceID, err := c.query(uri, nil, resp, compress...)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	err = c.checkResponse(resp)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	return nil
 }
 
 func (c *Client) queryAndCheckResponse(
@@ -945,4 +977,18 @@ func (c *Client) UpdateCPuserID(openID, cpUserID string) error {
 		return fmt.Errorf(resp.Msg)
 	}
 	return nil
+}
+
+// RiskSensitive 敏感词检测
+func (c *Client) syncEventPublicAttr(version int64) (*SyncEventAttrsResp, error) {
+
+	ret := &SyncEventAttrsResp{}
+	resp := &response{Data: ret}
+
+	args := map[string]string{
+		"version": I64toa(version),
+	}
+
+	err := c.getAndCheckResponse(apiSyncEventPublicAttr, args, resp)
+	return ret, err
 }

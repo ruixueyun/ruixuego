@@ -90,9 +90,10 @@ func SetUserUpdateType(updateType string) BigdataOptions {
 }
 
 // Tracks 大数据埋点事件上报
-// 		devicecode 设备码
-// 		distinctID 用户标识, 通常为瑞雪 OpenID
-// 		opts 埋点动态参数设置
+//
+//	devicecode 设备码
+//	distinctID 用户标识, 通常为瑞雪 OpenID
+//	opts 埋点动态参数设置
 func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions) error {
 	if devicecode == "" && distinctID == "" {
 		return ErrInvalidDevicecode
@@ -131,6 +132,18 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 	if logData.Time == "" {
 		logData.Time = time.Now().Format(dateTimeFormat)
 	}
+
+	// 设置事件公共属性
+	if len(logData.Event) > 0 {
+		attrs := FetchEventPublicAttrs(logData.Event)
+		if len(attrs) > 0 {
+			for _, attr := range attrs {
+				attrValue := GetEventPublicAttrValue(attr)
+				logData.Properties[attr] = attrValue
+			}
+		}
+	}
+
 	return p.writer.Write(logData)
 }
 
