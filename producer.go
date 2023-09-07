@@ -139,6 +139,8 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 		if len(attrs) > 0 {
 			for _, attr := range attrs {
 				attrValue := GetEventPublicAttrValue(attr)
+
+				// 同名的属性，会被覆盖。
 				logData.Properties[attr] = attrValue
 			}
 		}
