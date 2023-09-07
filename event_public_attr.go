@@ -90,6 +90,11 @@ func SyncEventPublicAttr(c *Client) error {
 }
 
 func FetchEventPublicAttrs(event string) []string {
+
+	if eventPublicAttrData == nil {
+		return nil
+	}
+
 	eventPublicAttrData.Mutx.Lock()
 	defer eventPublicAttrData.Mutx.Unlock()
 
