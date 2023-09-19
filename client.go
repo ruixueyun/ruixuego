@@ -53,6 +53,7 @@ const (
 	apiQueryUserRank         = "/v1/social/serverapi/queryuserrank"
 	apiGetRankList           = "/v1/social/serverapi/getranklist"
 	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
+	apiRankDeleteUser        = "/v1/social/serverapi/deleteuserscore"
 	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
 
 	apiBigDataTrack = "/v1/data/api/track"
@@ -679,6 +680,20 @@ func (c *Client) RankSetScore(rankID string, openId string, score int64) error {
 		RankID: rankID,
 		OpenID: openId,
 		Score:  score,
+	}, nil)
+
+	return err
+}
+
+// DeleteRankUser 删除排行榜用户
+func (c *Client) DeleteRankUser(rankID string, openId string) error {
+	if rankID == "" || openId == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiRankDeleteUser, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
 	}, nil)
 
 	return err
