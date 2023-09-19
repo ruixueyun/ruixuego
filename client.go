@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 	"time"
 
@@ -52,6 +53,7 @@ const (
 	apiQueryUserRank         = "/v1/social/serverapi/queryuserrank"
 	apiGetRankList           = "/v1/social/serverapi/getranklist"
 	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
+	apiRankDeleteUser        = "/v1/social/serverapi/deleteuserscore"
 	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
 
 	apiBigDataTrack = "/v1/data/api/track"
@@ -81,6 +83,8 @@ const (
 	apiReportCustomAction     = "/v1/attribution/user/custom_action"
 
 	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
+
+	apiSyncEventPublicAttr = "/v1/sdkconfig/sync/event_attrs"
 )
 
 var defaultClient *Client
@@ -95,6 +99,9 @@ func NewClient() (c *Client, err error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// 同步事件公共属性
+		SyncEventPublicAttr(c)
 	}
 	return c, nil
 }
@@ -130,6 +137,32 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	}
 
 	return traceID, req
+}
+
+func (c *Client) getAndCheckResponse(url string, args map[string]string, resp *response, compress ...bool) error {
+
+	if resp == nil {
+		resp = &response{}
+	}
+
+	dataValue := make(url2.Values)
+	for k, v := range args {
+		dataValue.Add(k, v)
+	}
+
+	uri := url + "?" + dataValue.Encode()
+
+	traceID, err := c.query(uri, nil, resp, compress...)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	err = c.checkResponse(resp)
+	if err != nil {
+		return errWithTraceID(err, traceID)
+	}
+
+	return nil
 }
 
 func (c *Client) queryAndCheckResponse(
@@ -652,6 +685,20 @@ func (c *Client) RankSetScore(rankID string, openId string, score int64) error {
 	return err
 }
 
+// DeleteRankUser 删除排行榜用户
+func (c *Client) DeleteRankUser(rankID string, openId string) error {
+	if rankID == "" || openId == "" {
+		return ErrInvalidOpenID
+	}
+
+	err := c.queryAndCheckResponse(apiRankDeleteUser, &rankAPIArg{
+		RankID: rankID,
+		OpenID: openId,
+	}, nil)
+
+	return err
+}
+
 // QueryUserRank 查询用户排行情况
 func (c *Client) QueryUserRank(rankID string, openId string) (*RankMember, error) {
 	if rankID == "" || openId == "" {
@@ -945,4 +992,18 @@ func (c *Client) UpdateCPuserID(openID, cpUserID string) error {
 		return fmt.Errorf(resp.Msg)
 	}
 	return nil
+}
+
+// RiskSensitive 敏感词检测
+func (c *Client) syncEventPublicAttr(version int64) (*SyncEventAttrsResp, error) {
+
+	ret := &SyncEventAttrsResp{}
+	resp := &response{Data: ret}
+
+	args := map[string]string{
+		"version": I64toa(version),
+	}
+
+	err := c.getAndCheckResponse(apiSyncEventPublicAttr, args, resp)
+	return ret, err
 }
