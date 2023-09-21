@@ -740,8 +740,8 @@ func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember,
 		return nil, ErrInvalidOpenID
 	}
 
-	ret := make([]*RankMember, 0)
-	resp := &response{Data: ret}
+	var ret []*RankMember
+	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiFriendsRank, &rankAPIArg{
 		RankID: rankID,
