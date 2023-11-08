@@ -55,6 +55,7 @@ const (
 	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
 	apiRankDeleteUser        = "/v1/social/serverapi/deleteuserscore"
 	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
+	apiRankDetail            = "/v1/social/serverapi/rankdetail"
 
 	apiBigDataTrack = "/v1/data/api/track"
 
@@ -746,6 +747,22 @@ func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember,
 	err := c.queryAndCheckResponse(apiFriendsRank, &rankAPIArg{
 		RankID: rankID,
 		OpenID: openId,
+	}, resp)
+
+	return ret, err
+}
+
+// GetRankDetail 查询排行榜详情
+func (c *Client) GetRankDetail(rankID string) (*RespRankDetail, error) {
+	if rankID == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	ret := &RespRankDetail{}
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiRankDetail, &rankAPIArg{
+		RankID: rankID,
 	}, resp)
 
 	return ret, err

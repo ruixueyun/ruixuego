@@ -105,3 +105,12 @@ type ReportCustomAction struct {
 	OpenID string `json:"open_id"`
 	Action string `json:"action"` // 上报行为
 }
+
+type RespRankDetail struct {
+	RankID       string `json:"rank_id"`
+	Capacity     int32  `json:"capacity"`      // 排行榜容量
+	ContinueTime int32  `json:"continue_hour"` // 排行榜持续时间 单位（小时）
+	Flag         int64  `json:"flag"`          // CP 自定义 Flag
+	StartTime    string `json:"start_time"`    // 排行榜开启时间
+	DestroyTime  string `json:"destroy_time"`  // 排行榜销毁时间
+}
