@@ -114,3 +114,7 @@ type RespRankDetail struct {
 	StartTime    string `json:"start_time"`    // 排行榜开启时间
 	DestroyTime  string `json:"destroy_time"`  // 排行榜销毁时间
 }
+
+type RespAllRankID struct {
+	RankIDList []string `json:"list"`
+}

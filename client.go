@@ -56,6 +56,7 @@ const (
 	apiRankDeleteUser        = "/v1/social/serverapi/deleteuserscore"
 	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
 	apiRankDetail            = "/v1/social/serverapi/rankdetail"
+	apiAllRankIDList         = "/v1/social/serverapi/getallranklist"
 
 	apiBigDataTrack = "/v1/data/api/track"
 
@@ -764,6 +765,17 @@ func (c *Client) GetRankDetail(rankID string) (*RespRankDetail, error) {
 	err := c.queryAndCheckResponse(apiRankDetail, &rankAPIArg{
 		RankID: rankID,
 	}, resp)
+
+	return ret, err
+}
+
+// GetAllRankIDList 查询所有排行ID
+func (c *Client) GetAllRankIDList() (*RespAllRankID, error) {
+
+	ret := &RespAllRankID{}
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiAllRankIDList, nil, resp)
 
 	return ret, err
 }
