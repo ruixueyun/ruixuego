@@ -35,11 +35,6 @@ func main() {
 		fmt.Println("close result:", ruixuego.Close())
 	}()
 
-	// 注册公共属性数据值
-	ruixuego.InitEventPublicAttr().
-		WithPublicAttrHandler("key1", func() interface{} { return "123" }).
-		WithPublicAttrHandler("attr2", func() interface{} { return 456 })
-
 	// 事件埋点
 	err = ruixuego.GetDefaultClient().Tracks(
 		"abcdef",

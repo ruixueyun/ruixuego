@@ -133,19 +133,6 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 		logData.Time = time.Now().Format(dateTimeFormat)
 	}
 
-	// 设置事件公共属性
-	if len(logData.Event) > 0 {
-		attrs := FetchEventPublicAttrs(logData.Event)
-		if len(attrs) > 0 {
-			for _, attr := range attrs {
-				attrValue := GetEventPublicAttrValue(attr)
-
-				// 同名的属性，会被覆盖。
-				logData.Properties[attr] = attrValue
-			}
-		}
-	}
-
 	return p.writer.Write(logData)
 }
 

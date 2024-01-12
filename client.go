@@ -101,9 +101,6 @@ func NewClient() (c *Client, err error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// 同步事件公共属性
-		SyncEventPublicAttr(c)
 	}
 	return c, nil
 }
@@ -1021,18 +1018,4 @@ func (c *Client) UpdateCPuserID(openID, cpUserID string) error {
 		return fmt.Errorf(resp.Msg)
 	}
 	return nil
-}
-
-// RiskSensitive 敏感词检测
-func (c *Client) syncEventPublicAttr(version int64) (*SyncEventAttrsResp, error) {
-
-	ret := &SyncEventAttrsResp{}
-	resp := &response{Data: ret}
-
-	args := map[string]string{
-		"version": I64toa(version),
-	}
-
-	err := c.getAndCheckResponse(apiSyncEventPublicAttr, args, resp)
-	return ret, err
 }
