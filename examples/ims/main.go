@@ -3,8 +3,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/ruixueyun/ruixuego"
 )
 
@@ -52,10 +50,10 @@ func main() {
 	//
 	// fmt.Printf("%+v\n", tuser)
 
-	tuser, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn"}, []*ruixuego.GreenRequestTask{{Tag: 1, URL: "https://oss.ruixueyun.com/image/4444_09ad12c35307b04e894290bf1a75d060.jpeg"}}, "1234", "")
-	if err != nil {
-		panic(err)
-	}
+	// tuser, err := ruixuego.GetDefaultClient().RiskGreenAsyncScan([]string{"porn"}, []*ruixuego.GreenRequestTask{{Tag: 1, URL: "https://oss.ruixueyun.com/image/4444_09ad12c35307b04e894290bf1a75d060.jpeg"}}, "1234", "")
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	fmt.Printf("%+v\n", tuser)
+	// fmt.Printf("%+v\n", tuser)
 }

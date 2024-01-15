@@ -3,7 +3,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/ruixueyun/ruixuego"
 )
 
@@ -98,18 +97,18 @@ func main() {
 	//	panic(err)
 	//}
 
-	tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
-	task := &ruixuego.GreenRequestTask{
-		Tag: 123456,
-		URL: "https://avatarfile.weile.com/temp/523872878-1687165437",
-	}
-	tasks = append(tasks, task)
+	// tasks := make([]*ruixuego.GreenRequestTask, 0, 1)
+	// task := &ruixuego.GreenRequestTask{
+	// 	Tag: 123456,
+	// 	URL: "https://avatarfile.weile.com/temp/523872878-1687165437",
+	// }
+	// tasks = append(tasks, task)
 
-	resp, err := ruixuego.GetDefaultClient().RiskGreenStrongScan([]string{"baselineCheck_pro"}, tasks, "")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("resp +", resp.Results[0])
+	// resp, err := ruixuego.GetDefaultClient().RiskGreenStrongScan([]string{"baselineCheck_pro"}, tasks, "")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("resp +", resp.Results[0])
 	//
 	//fmt.Println("done")
 

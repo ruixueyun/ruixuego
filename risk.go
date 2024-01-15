@@ -91,3 +91,30 @@ type MediaResp struct {
 		TraceID int    `json:"trace_id"`
 	} `json:"data"`
 }
+
+type RiskContentImageScanReq struct {
+	URL string `json:"url"`
+}
+
+type RiskContentImageScanResp struct {
+	URL        string    `json:"url"`        // 图片地址
+	Suggestion string    `json:"suggestion"` // 审核结果 pass: 通过；risky: 风险
+	Results    []Results `json:"results"`    // 检测结果详情
+}
+
+type Results struct {
+	Label      string  `json:"label"`      // 标签
+	Confidence float64 `json:"confidence"` // 置信分值，0到100分; 部分标签无置信分
+}
+
+type RiskContentTextScanReq struct {
+	OpenID  string `json:"open_id"`                    // 微信小程序openid
+	Scene   string `json:"scene" binding:"required"`   // 场景 nick_name: 昵称；private_chat: 私聊；public_chat: 公聊评论
+	Content string `json:"content" binding:"required"` // 文本内容
+}
+
+type RiskContentTextScanResp struct {
+	Suggestion string   `json:"suggestion"` // 审核结果 pass: 通过；risky: 风险
+	Words      []string `json:"words"`      // 敏感词
+	Content    string   `json:"content"`    // 替换后的文本内容
+}

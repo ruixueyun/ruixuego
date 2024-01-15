@@ -75,14 +75,10 @@ const (
 
 	apiPusherPush = "/v1/pusher/push/push"
 
-	apiRiskSensitive          = "/v1/risk/sensitive"
-	apiRiskGreenSyncScan      = "/v1/risk/green/img/syncscan"
-	apiRiskGreenAsyncScan     = "/v1/risk/green/img/asyncscan"
-	apiRiskGreenGetScanResult = "/v1/risk/green/img/getscanres"
-	apiRiskGreenFeedback      = "/v1/risk/green/img/scanfeedback"
-	apiRiskGreenStrongScan    = "/v1/risk/green/img/strongscan"
-	apiRiskGreenCheck         = "/v1/risk/sensitive/media/check"
-	apiReportCustomAction     = "/v1/attribution/user/custom_action"
+	apiRiskTextScan  = "/v1/risk/content/text/scan"
+	apiRiskImageScan = "/v1/risk/content/image/scan"
+
+	apiReportCustomAction = "/v1/attribution/user/custom_action"
 
 	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
 
@@ -129,6 +125,7 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerTraceID, traceID)
 	req.Header.Add(headerCPID, cpID)
 	req.Header.Add(headerProductID, config.ProductID)
+	req.Header.Add(headerChannelID, config.ChannelID)
 	req.Header.Add(headerServiceMark, config.ServiceMark)
 	req.Header.Add(headerTimestamp, ts)
 	if len(withoutSign) == 0 {
@@ -880,102 +877,26 @@ func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) err
 	return c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, nil, productID, channelID)
 }
 
-// RiskGreenSyncScan 内容安全图片检查同步获取结果
-func (c *Client) RiskGreenSyncScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
-	if len(scenes) <= 0 || len(tasks) <= 0 {
-		return nil, ErrInvalidOpenID
-	}
-	ret := &GreenUsercaseResult{}
-	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenSyncScan, &GreenRequest{
-		Scenes: scenes,
-		Tasks:  tasks,
-		Extend: extend,
-	}, resp)
-	return ret, err
-}
-
-// RiskGreenAsyncScan 内容安全图片检查异步获取结果
-func (c *Client) RiskGreenAsyncScan(scenes []string, tasks []*GreenRequestTask, extend string, callback string) (*GreenUsercaseResult, error) {
-	if len(scenes) <= 0 || len(tasks) <= 0 {
-		return nil, ErrInvalidOpenID
-	}
-	ret := &GreenUsercaseResult{}
-	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenAsyncScan, &GreenRequest{
-		Scenes:     scenes,
-		Tasks:      tasks,
-		Extend:     extend,
-		CPCallback: callback,
-	}, resp)
-	return ret, err
-}
-
-// RiskGreenGetScanRes 获取图片审核结果
-func (c *Client) RiskGreenGetScanRes(taskID []string) (*GreenUsercaseResult, error) {
-	if len(taskID) <= 0 {
-		return nil, ErrInvalidOpenID
-	}
-	ret := &GreenUsercaseResult{}
-	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenGetScanResult, &GreenRequest{
-		TaskID: taskID,
-	}, resp)
-	return ret, err
-}
-
-// RiskGreenFeedback 人工审核图片反馈结果
-func (c *Client) RiskGreenFeedback(taskID, url string, results map[string]string) error {
-	if len(url) <= 0 || len(results) <= 0 {
-		return ErrInvalidOpenID
-	}
-	err := c.queryAndCheckResponse(apiRiskGreenFeedback, &GreenFeedbackRequest{
-		TaskID:  taskID,
-		URL:     url,
-		Results: results,
-	}, nil)
-	return err
-}
-
-// RiskSensitive 敏感词检测
-func (c *Client) RiskSensitive(content string) (*SensitiveResponse, error) {
-	if len(content) <= 0 {
+// RiskContentTextScan 内容安全文本检查（增强）
+func (c *Client) RiskContentTextScan(req *RiskContentTextScanReq) (*RiskContentTextScanResp, error) {
+	if req == nil || len(req.Scene) <= 0 || len(req.Content) <= 0 {
 		return nil, ErrInvalidParam
 	}
-	req := &SensitiveReq{
-		Content: content,
-	}
-	ret := &SensitiveResponse{}
+	ret := &RiskContentTextScanResp{}
 	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskSensitive, req, resp)
+	err := c.queryAndCheckResponse(apiRiskTextScan, req, resp)
 	return ret, err
 }
 
-// RiskGreenStrongScan 内容安全图片检查增强版
-func (c *Client) RiskGreenStrongScan(scenes []string, tasks []*GreenRequestTask, extend string) (*GreenUsercaseResult, error) {
-	if len(scenes) <= 0 || len(tasks) <= 0 {
-		return nil, ErrInvalidOpenID
-	}
-	ret := &GreenUsercaseResult{}
-	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenStrongScan, &GreenRequest{
-		Scenes: scenes,
-		Tasks:  tasks,
-		Extend: extend,
-	}, resp)
-	return ret, err
-}
-
-// RiskGreenCheck 图片基础异步检测(先使用微信再使用阿里)
-func (c *Client) RiskGreenCheck(urls []string, scenes []string) (*MediaResp, error) {
-	if len(scenes) <= 0 || len(urls) <= 0 {
+// RiskContentImageScan 内容安全图片检查（增强）
+func (c *Client) RiskContentImageScan(url string) (*RiskContentImageScanResp, error) {
+	if len(url) <= 0 {
 		return nil, ErrInvalidParam
 	}
-	ret := &MediaResp{}
+	ret := &RiskContentImageScanResp{}
 	resp := &response{Data: ret}
-	err := c.queryAndCheckResponse(apiRiskGreenCheck, &MediaCheckReq{
-		URLs:   urls,
-		Scenes: scenes,
+	err := c.queryAndCheckResponse(apiRiskImageScan, &RiskContentImageScanReq{
+		URL: url,
 	}, resp)
 	return ret, err
 }
