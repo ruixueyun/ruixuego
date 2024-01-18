@@ -5,7 +5,7 @@ package ruixuego
 
 import "fmt"
 
-const Version = "v0.1.25"
+const Version = "v0.1.31"
 
 var config *Config
 
