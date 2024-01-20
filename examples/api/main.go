@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	testAppID     = "wltestapp"
+	testProductID = "wltestapp"
 	testChannelID = "wltestchannel"
 	testAppKey    = "00000000000000000000000"
 	rankID        = "0_200_202_dayly"
@@ -16,7 +16,7 @@ const (
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
 		APIDomain:   "https://domain.com",
-		AppKeys:     map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
+		AppKeys:     map[string]map[string]string{testProductID: {testChannelID: testAppKey}},
 		CPKey:       "00000000000000000000000",
 		CPID:        1000049,
 		ServiceMark: "aabbcc",
@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// err = ruixuego.GetDefaultClient().SetCustom(testAppID, "rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "123")
+	// err = ruixuego.GetDefaultClient().SetCustom(testProductID, "rxuR4bwM27Y1JQwtAQn6H39y_9VrkEgR", "123")
 	// if err != nil {
 	//	panic(err)
 	// }

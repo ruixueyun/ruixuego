@@ -9,7 +9,7 @@ var (
 	ErrInvalidEvent             = errors.New("invalid event")
 	ErrInvalidCPID              = errors.New("invalid cpid")
 	ErrInvalidOpenID            = errors.New("invalid openid")
-	ErrInvalidAppID             = errors.New("invalid appid")
+	ErrInvalidProductID         = errors.New("invalid productid")
 	ErrAppKeyNotExistx          = errors.New("appkey not exists")
 	ErrInvalidType              = errors.New("invalid type")
 	ErrInvalidIMSConversationID = errors.New("invalid ims conversation id")

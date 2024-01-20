@@ -10,7 +10,7 @@ const (
 const (
 	PresetKeyPlatformID   = "$platformid"
 	PresetKeyCPID         = "$cpid"
-	PresetKeyAppID        = "$appid"
+	PresetKeyProductID    = "$productid"
 	PresetKeyChannelID    = "$channelid"
 	PresetKeySubChannelID = "$subchannelid"
 	PresetKeyUUID         = "$uuid"
@@ -37,7 +37,7 @@ type BigDataLog struct {
 	UUID         string                 `json:"uuid"`
 	IP           string                 `json:"ip,omitempty"`
 	Properties   map[string]interface{} `json:"properties"`
-	AppID        string                 `json:"app_id,omitempty"`
+	ProductID    string                 `json:"product_id,omitempty"`
 	ChannelID    string                 `json:"channel_id,omitempty"`
 	SubChannelID string                 `json:"sub_channel_id,omitempty"`
 	CPID         uint32                 `json:"cpid"`

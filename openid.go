@@ -21,7 +21,7 @@ var (
 // OpenIDData OpenID 加密 OpenID 数据定义
 type OpenIDData struct {
 	TraceID       string         `json:"traceid,omitempty"`
-	AppID         string         `json:"appid,omitempty"`
+	ProducdID     string         `json:"productid,omitempty"`
 	ChannelID     string         `json:"channelid,omitempty"`
 	Method        string         `json:"method,omitempty"`
 	OpenID        string         `json:"openid,omitempty"`
@@ -73,46 +73,46 @@ func (data *OpenIDData) Release() {
 	poolOpenIDData.Put(data)
 }
 
-func getKey(appID, channelID string) string {
-	return appID + "_" + channelID
+func getKey(productID, channelID string) string {
+	return productID + "_" + channelID
 }
 
 // AddAESKey 添加预置密钥
-func AddAESKey(appID, channelID string, key []byte) error {
+func AddAESKey(productID, channelID string, key []byte) error {
 	k, err := NewAESData(key)
 	if err != nil {
 		return err
 	}
-	appKeys.Store(getKey(appID, channelID), k)
+	appKeys.Store(getKey(productID, channelID), k)
 	return nil
 }
 
 // DelAESKey 删除预置密钥
-func DelAESKey(appID, channelID string) {
-	appKeys.Delete(getKey(appID, channelID))
+func DelAESKey(productID, channelID string) {
+	appKeys.Delete(getKey(productID, channelID))
 }
 
 // EncryptOpenIDData 加密 OpenID 数据, 获取密文
 func EncryptOpenIDData(
-	traceID, appID, channelID, method, openID, ext string) (string, error) {
+	traceID, productID, channelID, method, openID, ext string) (string, error) {
 
-	k, ok := appKeys.Load(getKey(appID, channelID))
+	k, ok := appKeys.Load(getKey(productID, channelID))
 	if !ok {
 		return "", ErrAppKeyNotExistx
 	}
 	return EncryptOpenIDDataWithKey(
-		k.(*AESData), traceID, appID, channelID, method, openID, ext)
+		k.(*AESData), traceID, productID, channelID, method, openID, ext)
 }
 
 // EncryptOpenIDDataWithKey 加密 OpenID 数据, 获取密文
 func EncryptOpenIDDataWithKey(
 	aesData *AESData,
-	traceID, appID, channelID, method, openID, ext string) (ret string, err error) {
+	traceID, productID, channelID, method, openID, ext string) (ret string, err error) {
 
 	data := poolOpenIDData.Get().(*OpenIDData)
 	defer data.Release()
 	data.TraceID = traceID
-	data.AppID = appID
+	data.ProducdID = productID
 	data.ChannelID = channelID
 	data.Method = method
 	data.OpenID = openID
@@ -126,8 +126,8 @@ func EncryptOpenIDDataWithKey(
 }
 
 // DecryptOpenIDData 解密 OpenIDData 密文字符串
-func DecryptOpenIDData(appID, channelID, openIDCipherText string) (*OpenIDData, error) {
-	k, ok := appKeys.Load(getKey(appID, channelID))
+func DecryptOpenIDData(productID, channelID, openIDCipherText string) (*OpenIDData, error) {
+	k, ok := appKeys.Load(getKey(productID, channelID))
 	if !ok {
 		return nil, ErrAppKeyNotExistx
 	}
@@ -154,13 +154,13 @@ func DecryptOpenIDDataWithKey(
 // 用于未接入通行证的业务又想实用其他接口的情况
 // userID 参数为 CP 自己用户的唯一标识符, 一般情况下推荐使用用户 ID
 func GenerateVirtualLoginData(
-	traceID, appID, channelID, userID string) (ret string, err error) {
-	return EncryptOpenIDData(traceID, appID, channelID, "virtual", "", userID)
+	traceID, productID, channelID, userID string) (ret string, err error) {
+	return EncryptOpenIDData(traceID, productID, channelID, "virtual", "", userID)
 }
 
 // GenerateVirtualLoginDataWithKey 生成用于虚拟登录瑞雪的登录凭证
 func GenerateVirtualLoginDataWithKey(
 	aesData *AESData,
-	traceID, appID, channelID, userID string) (ret string, err error) {
-	return EncryptOpenIDDataWithKey(aesData, traceID, appID, channelID, "virtual", "", userID)
+	traceID, productID, channelID, userID string) (ret string, err error) {
+	return EncryptOpenIDDataWithKey(aesData, traceID, productID, channelID, "virtual", "", userID)
 }

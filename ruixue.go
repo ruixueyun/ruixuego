@@ -22,12 +22,12 @@ func Init(conf *Config) (err error) {
 }
 
 func loadAppKeys(m map[string]map[string]string) error {
-	for appID, channelKeys := range m {
+	for productID, channelKeys := range m {
 		for channelID, appKey := range channelKeys {
-			err := AddAESKey(appID, channelID, []byte(appKey))
+			err := AddAESKey(productID, channelID, []byte(appKey))
 			if err != nil {
-				return fmt.Errorf("invalid appkey: %s, appid: %s, channelid: %s, error: %s",
-					appKey, appID, channelID, err.Error())
+				return fmt.Errorf("invalid appkey: %s, productid: %s, channelid: %s, error: %s",
+					appKey, productID, channelID, err.Error())
 			}
 		}
 

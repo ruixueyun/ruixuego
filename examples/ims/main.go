@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	testAppID     = "test_product"
+	testProductID = "test_product"
 	testChannelID = "test_channel"
 )
 
@@ -32,7 +32,7 @@ func main() {
 	//	ClientType:     256,
 	//	ConversationID: "$4$worldChannel",
 	//	ConvType:       4,
-	//	ProductID:      testAppID,
+	//	ProductID:      testProductID,
 	//	ChannelID:      testChannelID,
 	//	Content:        "{\"text\":\"22222\"}",
 	//	Ext:            map[string]string{"userData": "{\"game\" : \"22222\"}"},

@@ -51,7 +51,7 @@ func SetPreset(preset map[string]interface{}) BigdataOptions {
 		logData.Time = extractTime(preset)
 		if preset != nil {
 			logData.PlatformID = extractInt32(preset, PresetKeyPlatformID)
-			logData.AppID = extractStringProperty(preset, PresetKeyAppID)
+			logData.ProductID = extractStringProperty(preset, PresetKeyProductID)
 			logData.ChannelID = extractStringProperty(preset, PresetKeyChannelID)
 			logData.SubChannelID = extractStringProperty(preset, PresetKeySubChannelID)
 			logData.IP = extractStringProperty(preset, PresetKeyIP)

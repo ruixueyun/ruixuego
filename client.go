@@ -31,7 +31,6 @@ const (
 )
 
 const (
-	apiSetUserInfo           = "/v1/social/serverapi/setuserinfo"
 	apiSetCustom             = "/v1/social/serverapi/setcustom"
 	apiAddRelation           = "/v1/social/serverapi/addrelation"
 	apiDelRelation           = "/v1/social/serverapi/deleterelation"
@@ -282,34 +281,19 @@ func (c *Client) queryAddProductIDAndChannelID(
 
 }
 
-// SetUserInfo 设置用户信息
-func (c *Client) SetUserInfo(appID, openID string, userinfo *UserInfo) error {
-	if openID == "" {
-		return ErrInvalidOpenID
-	}
-	if appID == "" {
-		return ErrInvalidAppID
-	}
-
-	userinfo.AppID = appID
-	userinfo.OpenID = openID
-
-	return c.queryAndCheckResponse(apiSetUserInfo, userinfo, nil)
-}
-
 // SetCustom 给用户设置社交模块的自定义信息
-func (c *Client) SetCustom(appID, openID, custom string) error {
+func (c *Client) SetCustom(productID, openID, custom string) error {
 	if openID == "" {
 		return ErrInvalidOpenID
 	}
-	if appID == "" {
-		return ErrInvalidAppID
+	if productID == "" {
+		return ErrInvalidProductID
 	}
 
 	return c.queryAndCheckResponse(apiSetCustom, &argCustom{
-		AppID:  appID,
-		OpenID: openID,
-		Custom: custom,
+		ProductID: productID,
+		OpenID:    openID,
+		Custom:    custom,
 	}, nil)
 }
 
