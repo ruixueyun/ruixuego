@@ -18,9 +18,9 @@ type response struct {
 }
 
 type argCustom struct {
-	AppID  string `json:"appid"`
-	OpenID string `json:"openid"`
-	Custom string `json:"custom"`
+	ProductID string `json:"productid"`
+	OpenID    string `json:"openid"`
+	Custom    string `json:"custom"`
 }
 
 type argRelation struct {
@@ -57,16 +57,6 @@ type argLocation struct {
 //	CPID     uint32  `json:"CPID,omitempty"`
 //	Sex      int32   `json:"Sex,omitempty"`
 //}
-
-type UserInfo struct {
-	AppID    string `json:"appid,omitempty"`
-	OpenID   string `json:"openid,omitempty"`
-	Nickname string `json:"nickname,omitempty"`
-	Avatar   string `json:"avatar,omitempty"`
-	Region   string `json:"region,omitempty"`   // Format: 220101
-	Birthday string `json:"birthday,omitempty"` // Format: 2006-01-02
-	Sex      string `json:"sex,omitempty"`      // 0: female, 1: male
-}
 
 type rankAPIArg struct {
 	RankID      string `json:"rank_id"`

@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	testAppID     = "wltestapp"
+	testProductID = "wltestapp"
 	testChannelID = "wltestchannel"
 	testAppKey    = "00000000000000000000000"
 )
@@ -41,7 +41,7 @@ func main() {
 		"123456",
 		ruixuego.SetEvent("login"),
 		ruixuego.SetPreset(map[string]interface{}{
-			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
+			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
 		}),
@@ -57,7 +57,7 @@ func main() {
 		"123456",
 		ruixuego.SetUserUpdateType("user_setonce"),
 		ruixuego.SetPreset(map[string]interface{}{
-			ruixuego.PresetKeyAppID:        "123", // 设置 AppID 请用预置 Key
+			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
 		}),
