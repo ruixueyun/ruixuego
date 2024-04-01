@@ -130,7 +130,7 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 		logData.UUID = uuid.New().String()
 	}
 	if logData.Time == "" {
-		logData.Time = time.Now().Format(dateTimeFormat)
+		logData.Time = time.Now().Format(time.RFC3339Nano)
 	}
 
 	return p.writer.Write(logData)
