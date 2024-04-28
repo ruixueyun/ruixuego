@@ -607,6 +607,25 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	return code, nil
 }
 
+// SyncTrack 直接将埋点数据上报给瑞雪云
+func (c *Client) SyncTrack(data []byte) (int, error) {
+	if len(data) == 0 {
+		return defaultStatus, nil
+	}
+	traceID, req := c.getRequest(true)
+	ret := &response{}
+	req.Header.Add(headerDataCount, Itoa(1))
+	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, !config.BigData.DisableCompress)
+	if err != nil {
+		return code, errWithTraceID(err, traceID)
+	}
+	err = c.checkResponse(ret)
+	if err != nil {
+		return code, errWithTraceID(err, traceID)
+	}
+	return code, nil
+}
+
 // CreateRank 创建排行榜
 func (c *Client) CreateRank(rankID string, startTime, destroyTime time.Time) error {
 	if rankID == "" {
