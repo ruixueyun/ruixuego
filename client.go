@@ -609,22 +609,59 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 
 // SyncTrack 直接将埋点数据上报给瑞雪云
 // 前提要设置好 config
-func (c *Client) SyncTrack(data []byte) (int, error) {
-	if len(data) == 0 {
-		return defaultStatus, nil
+func (c *Client) SyncTrack(devicecode, distinctID string, opts ...BigdataOptions) error {
+	if devicecode == "" && distinctID == "" {
+		return ErrInvalidDevicecode
 	}
+
+	logData := &BigDataLog{
+		DistinctID: distinctID,
+		Devicecode: devicecode,
+	}
+	for _, opt := range opts {
+		err := opt(logData)
+		if err != nil {
+			return err
+		}
+	}
+	if logData.Type == "" {
+		return ErrInvalidType
+	}
+	if logData.CPID == 0 {
+		if config.CPID == 0 {
+			return ErrInvalidCPID
+		}
+		logData.CPID = config.CPID
+	}
+	if logData.PlatformID <= 0 {
+		logData.PlatformID = 10
+	}
+	if logData.UUID == "" {
+		logData.UUID = uuid.New().String()
+	}
+	if logData.Time == "" {
+		logData.Time = time.Now().Format(time.RFC3339Nano)
+	}
+
+	data := []*BigDataLog{logData}
+
+	b, err := MarshalJSON(data)
+	if err != nil {
+		return err
+	}
+
 	traceID, req := c.getRequest(true)
 	ret := &response{}
 	req.Header.Add(headerDataCount, Itoa(1))
-	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, !config.BigData.DisableCompress)
+	_, err = c.queryCode(apiBigDataTrack, req, config.TrackTimeout, b, ret, !config.BigData.DisableCompress)
 	if err != nil {
-		return code, errWithTraceID(err, traceID)
+		return errWithTraceID(err, traceID)
 	}
 	err = c.checkResponse(ret)
 	if err != nil {
-		return code, errWithTraceID(err, traceID)
+		return errWithTraceID(err, traceID)
 	}
-	return code, nil
+	return nil
 }
 
 // CreateRank 创建排行榜
