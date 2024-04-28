@@ -607,7 +607,7 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	return code, nil
 }
 
-// SyncTrack 直接将埋点数据上报给瑞雪云
+// SyncTrack 同步接口 直接将埋点数据上报给瑞雪云
 // 前提要设置好 config
 func (c *Client) SyncTrack(devicecode, distinctID string, opts ...BigdataOptions) error {
 	if devicecode == "" && distinctID == "" {
