@@ -608,6 +608,7 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 }
 
 // SyncTrack 直接将埋点数据上报给瑞雪云
+// 前提要设置好 config
 func (c *Client) SyncTrack(data []byte) (int, error) {
 	if len(data) == 0 {
 		return defaultStatus, nil
