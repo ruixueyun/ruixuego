@@ -138,9 +138,9 @@ type IMSJoinConversationReq struct {
 
 // IMSLeaveConversationReq 离开会话请求参数
 type IMSLeaveConversationReq struct {
-	ConversationIDs string `json:"conversation_ids,omitempty"`
-	UserID          string `json:"user_id"`
-	ClientType      int32  `json:"client_type,omitempty"` // 用户客户端类型
+	ConversationIDs []string `json:"conversation_ids,omitempty"`
+	UserID          string   `json:"user_id"`
+	ClientType      int32    `json:"client_type,omitempty"` // 用户客户端类型
 }
 
 // IMSUpdateConvUserDataReq 更新用户在会话中的属性请求参数
