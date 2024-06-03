@@ -118,3 +118,20 @@ type RiskContentTextScanResp struct {
 	Words      []string `json:"words"`      // 敏感词
 	Content    string   `json:"content"`    // 替换后的文本内容
 }
+
+// RealAuthReq 实名请求
+type RealAuthReq struct {
+	CPID      uint32 `json:"cpid"`       // cpid
+	ProductID string `json:"product_id"` // 产品id
+	IDCard    string `json:"id_card"`    // 身份证
+	RealName  string `json:"real_name"`  // 姓名
+}
+
+// RealAuthResponse 实名结果
+type RealAuthResponse struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data struct {
+		Verified int32 `json:"verified,omitempty"`
+	}
+}
