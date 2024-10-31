@@ -20,20 +20,24 @@ type response struct {
 type argCustom struct {
 	ProductID string `json:"productid"`
 	OpenID    string `json:"openid"`
+	CPUserID  string `json:"cp_user_id"`
 	Custom    string `json:"custom"`
 }
 
 type argRelation struct {
-	Types         RelationTypes `json:"types,omitempty"` // map[CP自定类型]是否为双向关系
-	Type          string        `json:"type"`
-	Target        string        `json:"target"`
-	TargetRemarks string        `json:"target_remarks,omitempty"`
-	OpenID        string        `json:"openid,omitempty"`
-	UserRemarks   string        `json:"user_remarks,omitempty"`
+	Types          RelationTypes `json:"types,omitempty"` // map[CP自定类型]是否为双向关系
+	Type           string        `json:"type"`
+	Target         string        `json:"target"`
+	TargetCPUserID string        `json:"target_cp_user_id"`
+	TargetRemarks  string        `json:"target_remarks,omitempty"`
+	OpenID         string        `json:"openid,omitempty"`
+	CPUserID       string        `json:"cp_user_id"`
+	UserRemarks    string        `json:"user_remarks,omitempty"`
 }
 
 type argLocation struct {
 	OpenID    string   `json:"openid,omitempty"`
+	CPUserID  string   `json:"cp_user_id"`
 	Type      string   `json:"type,omitempty"`
 	Types     []string `json:"types,omitempty"`
 	Longitude float64  `json:"lon,omitempty"`
@@ -62,6 +66,7 @@ type rankAPIArg struct {
 	RankID      string `json:"rank_id"`
 	Score       int64  `json:"score,omitempty"`
 	OpenID      string `json:"open_id,omitempty"`
+	CPUserID    string `json:"cp_user_id"`
 	StartTime   string `json:"start,omitempty"`
 	DestroyTime string `json:"destroy,omitempty"`
 	StartRank   int32  `json:"start_rank,omitempty"`
@@ -70,6 +75,7 @@ type rankAPIArg struct {
 
 type RelationUser struct {
 	OpenID   string  `json:"openid,omitempty"`
+	CPUserID string  `json:"cp_user_id"`
 	NickName string  `json:"nickname,omitempty"`
 	Birthday string  `json:"birthday,omitempty"`
 	Remarks  string  `json:"remarks,omitempty"`

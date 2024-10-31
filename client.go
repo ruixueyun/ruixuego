@@ -282,8 +282,10 @@ func (c *Client) queryAddProductIDAndChannelID(
 }
 
 // SetCustom 给用户设置社交模块的自定义信息
-func (c *Client) SetCustom(productID, openID, custom string) error {
-	if openID == "" {
+// openID 为 瑞雪opendid
+// cpUserID cp侧用户id
+func (c *Client) SetCustom(productID, openID, cpUserID, custom string) error {
+	if openID == "" && cpUserID == "" {
 		return ErrInvalidOpenID
 	}
 	if productID == "" {
@@ -293,6 +295,7 @@ func (c *Client) SetCustom(productID, openID, custom string) error {
 	return c.queryAndCheckResponse(apiSetCustom, &argCustom{
 		ProductID: productID,
 		OpenID:    openID,
+		CPUserID:  cpUserID,
 		Custom:    custom,
 	}, nil)
 }
@@ -301,8 +304,8 @@ func (c *Client) SetCustom(productID, openID, custom string) error {
 // remarks[0] openID 用户给 targetOpenID 用户设置的备注
 // remarks[1] targetOpenID 用户给 openID 用户设置的备注
 func (c *Client) AddRelation(
-	types RelationTypes, openID, targetOpenID string, remarks ...string) error {
-	if openID == "" || targetOpenID == "" {
+	types RelationTypes, openID, userID, targetOpenID, targetUserID string, remarks ...string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
 	if len(types) == 0 {
@@ -310,9 +313,11 @@ func (c *Client) AddRelation(
 	}
 
 	arg := &argRelation{
-		Types:  types,
-		OpenID: openID,
-		Target: targetOpenID,
+		Types:          types,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}
 	if len(remarks) > 0 {
 		arg.TargetRemarks = remarks[0]
@@ -326,8 +331,8 @@ func (c *Client) AddRelation(
 
 // DelRelation 删除自定义关系
 func (c *Client) DelRelation(
-	types RelationTypes, openID, targetOpenID string) error {
-	if openID == "" || targetOpenID == "" {
+	types RelationTypes, openID, userID, targetOpenID, targetUserID string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
 	if len(types) == 0 {
@@ -335,16 +340,18 @@ func (c *Client) DelRelation(
 	}
 
 	return c.queryAndCheckResponse(apiDelRelation, &argRelation{
-		Types:  types,
-		OpenID: openID,
-		Target: targetOpenID,
+		Types:          types,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}, nil)
 }
 
 // UpdateRelationRemarks 更新自定关系备注
 func (c *Client) UpdateRelationRemarks(
-	typ, openID, targetOpenID, remarks string) error {
-	if openID == "" || targetOpenID == "" {
+	typ, openID, userID, targetOpenID, targetUserID string, remarks string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
 	if typ == "" {
@@ -352,16 +359,18 @@ func (c *Client) UpdateRelationRemarks(
 	}
 
 	return c.queryAndCheckResponse(apiUpdateRelationRemarks, &argRelation{
-		Type:          typ,
-		OpenID:        openID,
-		Target:        targetOpenID,
-		TargetRemarks: remarks,
+		Type:           typ,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
+		TargetRemarks:  remarks,
 	}, nil)
 }
 
 // RelationList 获取自定关系列表
-func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
-	if openID == "" {
+func (c *Client) RelationList(typ, openID, userID string) ([]*RelationUser, error) {
+	if openID == "" && userID == "" {
 		return nil, ErrInvalidOpenID
 	}
 	if typ == "" {
@@ -372,8 +381,9 @@ func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiRelationList, &argRelation{
-		Type:   typ,
-		OpenID: openID,
+		Type:     typ,
+		OpenID:   openID,
+		CPUserID: userID,
 	}, resp)
 
 	if err != nil {
@@ -384,14 +394,16 @@ func (c *Client) RelationList(typ, openID string) ([]*RelationUser, error) {
 }
 
 // HasRelation 判断 Target 是否与 User 存在指定关系
-func (c *Client) HasRelation(typ, openID, targetOpenID string) (bool, error) {
+func (c *Client) HasRelation(typ, openID, userID, targetOpenID, targetUserID string) (bool, error) {
 	ret := false
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiHasRelation, &argRelation{
-		Type:   typ,
-		OpenID: openID,
-		Target: targetOpenID,
+		Type:           typ,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}, resp)
 
 	return ret, err
@@ -401,14 +413,16 @@ func (c *Client) HasRelation(typ, openID, targetOpenID string) (bool, error) {
 // remarks[0] openID 用户给 targetOpenID 用户设置的备注
 // remarks[1] targetOpenID 用户给 openID 用户设置的备注
 func (c *Client) AddFriend(
-	openID, targetOpenID string, remarks ...string) error {
-	if openID == "" || targetOpenID == "" {
+	openID, userID, targetOpenID, targetUserID string, remarks ...string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
 
 	arg := &argRelation{
-		OpenID: openID,
-		Target: targetOpenID,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}
 	if len(remarks) > 0 {
 		arg.TargetRemarks = remarks[0]
@@ -422,34 +436,36 @@ func (c *Client) AddFriend(
 
 // DelFriend 删除好友
 func (c *Client) DelFriend(
-	openID, targetOpenID string) error {
-	if openID == "" || targetOpenID == "" {
+	openID, userID, targetOpenID, targetUserID string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
-
 	return c.queryAndCheckResponse(apiDelFriend, &argRelation{
-		OpenID: openID,
-		Target: targetOpenID,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}, nil)
 }
 
 // UpdateFriendRemarks 更新好友备注
 func (c *Client) UpdateFriendRemarks(
-	openID, targetOpenID, remarks string) error {
-	if openID == "" || targetOpenID == "" {
+	openID, userID, targetOpenID, targetUserID string, remarks string) error {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return ErrInvalidOpenID
 	}
-
 	return c.queryAndCheckResponse(apiUpdateFriendRemarks, &argRelation{
-		OpenID:        openID,
-		Target:        targetOpenID,
-		TargetRemarks: remarks,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
+		TargetRemarks:  remarks,
 	}, nil)
 }
 
 // FriendList 获取好友列表
-func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
-	if openID == "" {
+func (c *Client) FriendList(openID, userID string) ([]*RelationUser, error) {
+	if userID == "" && openID == "" {
 		return nil, ErrInvalidOpenID
 	}
 
@@ -457,7 +473,8 @@ func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiFriendList, &argRelation{
-		OpenID: openID,
+		OpenID:   openID,
+		CPUserID: userID,
 	}, resp)
 
 	if err != nil {
@@ -468,8 +485,8 @@ func (c *Client) FriendList(openID string) ([]*RelationUser, error) {
 }
 
 // GetRelationUser 查询好友信息
-func (c *Client) GetRelationUser(typ, openID, targetOpenID string) (*RelationUser, error) {
-	if openID == "" || targetOpenID == "" {
+func (c *Client) GetRelationUser(typ, openID, userID, targetOpenID, targetUserID string) (*RelationUser, error) {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return nil, ErrInvalidOpenID
 	}
 
@@ -481,26 +498,29 @@ func (c *Client) GetRelationUser(typ, openID, targetOpenID string) (*RelationUse
 	resp := &response{Data: ret}
 
 	err := c.queryAndCheckResponse(apiGetRealtionUser, &argRelation{
-		OpenID: openID,
-		Target: targetOpenID,
-		Type:   typ,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
+		Type:           typ,
 	}, resp)
 
 	return ret, err
 }
 
 // IsFriend 判断 Target 是否为 User 的好友
-func (c *Client) IsFriend(openID, targetOpenID string) (bool, error) {
-	if openID == "" || targetOpenID == "" {
+func (c *Client) IsFriend(openID, userID, targetOpenID, targetUserID string) (bool, error) {
+	if (userID == "" && openID == "") || (targetUserID == "" && targetOpenID == "") {
 		return false, ErrInvalidOpenID
 	}
-
 	ret := false
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiIsFriend, &argRelation{
-		OpenID: openID,
-		Target: targetOpenID,
+		OpenID:         openID,
+		CPUserID:       userID,
+		Target:         targetOpenID,
+		TargetCPUserID: targetUserID,
 	}, resp)
 
 	return ret, err
@@ -509,16 +529,18 @@ func (c *Client) IsFriend(openID, targetOpenID string) (bool, error) {
 // LBSUpdate 更新 WGS84 坐标
 //
 //	types 为 CP	自定义坐标分组, 比如可以同时将用户加入到 all 和 female 两个列表中
-func (c *Client) LBSUpdate(openID string, types []string, lon, lat float64) error {
-	if openID == "" {
+func (c *Client) LBSUpdate(openID, userID string, types []string, lon, lat float64) error {
+	if userID == "" && openID == "" {
 		return ErrInvalidOpenID
 	}
+
 	if len(types) == 0 {
 		return ErrInvalidType
 	}
 
 	return c.queryAndCheckResponse(apiLBSUpdate, &argLocation{
 		OpenID:    openID,
+		CPUserID:  userID,
 		Types:     types,
 		Longitude: lon,
 		Latitude:  lat,
@@ -526,8 +548,8 @@ func (c *Client) LBSUpdate(openID string, types []string, lon, lat float64) erro
 }
 
 // LBSDelete 删除 WGS84 坐标
-func (c *Client) LBSDelete(openID string, types []string) error {
-	if openID == "" {
+func (c *Client) LBSDelete(openID, userID string, types []string) error {
+	if userID == "" && openID == "" {
 		return ErrInvalidOpenID
 	}
 	if len(types) == 0 {
@@ -535,19 +557,20 @@ func (c *Client) LBSDelete(openID string, types []string) error {
 	}
 
 	return c.queryAndCheckResponse(apiLBSDelete, &argLocation{
-		OpenID: openID,
-		Types:  types,
+		OpenID:   openID,
+		CPUserID: userID,
+		Types:    types,
 	}, nil)
 }
 
 // LBSRadius 获取附近的人列表
 func (c *Client) LBSRadius(
-	openID, typ string,
+	openID, userID, typ string,
 	lon, lat, radius float64,
 	page, pageSize int,
 	count ...int) ([]*RelationUser, error) {
 
-	if openID == "" {
+	if userID == "" && openID == "" {
 		return nil, ErrInvalidOpenID
 	}
 	if typ == "" {
@@ -558,6 +581,7 @@ func (c *Client) LBSRadius(
 	resp := &response{Data: &ret}
 	arg := &argLocation{
 		OpenID:    openID,
+		CPUserID:  userID,
 		Type:      typ,
 		Longitude: lon,
 		Latitude:  lat,
@@ -693,61 +717,63 @@ func (c *Client) CloseRank(rankID string) error {
 }
 
 // RankAddScore 用户添加分数
-func (c *Client) RankAddScore(rankID string, openId string, score int64) error {
-	if rankID == "" || openId == "" {
+func (c *Client) RankAddScore(rankID string, openId, cpUserID string, score int64) error {
+	if rankID == "" || (openId == "" && cpUserID == "") {
 		return ErrInvalidOpenID
 	}
 
 	err := c.queryAndCheckResponse(apiRankAddScore, &rankAPIArg{
-		RankID: rankID,
-		OpenID: openId,
-		Score:  score,
+		RankID:   rankID,
+		OpenID:   openId,
+		CPUserID: cpUserID,
+		Score:    score,
 	}, nil)
 
 	return err
 }
 
 // RankSetScore 用户设置分数
-func (c *Client) RankSetScore(rankID string, openId string, score int64) error {
-	if rankID == "" || openId == "" {
+func (c *Client) RankSetScore(rankID string, openId, cpUserID string, score int64) error {
+	if rankID == "" || (openId == "" && cpUserID == "") {
 		return ErrInvalidOpenID
 	}
 
 	err := c.queryAndCheckResponse(apiRankSetScore, &rankAPIArg{
-		RankID: rankID,
-		OpenID: openId,
-		Score:  score,
+		RankID:   rankID,
+		OpenID:   openId,
+		CPUserID: cpUserID,
+		Score:    score,
 	}, nil)
 
 	return err
 }
 
 // DeleteRankUser 删除排行榜用户
-func (c *Client) DeleteRankUser(rankID string, openId string) error {
-	if rankID == "" || openId == "" {
+func (c *Client) DeleteRankUser(rankID string, openId, cpUserID string) error {
+	if rankID == "" || (openId == "" && cpUserID == "") {
 		return ErrInvalidOpenID
 	}
-
 	err := c.queryAndCheckResponse(apiRankDeleteUser, &rankAPIArg{
-		RankID: rankID,
-		OpenID: openId,
+		RankID:   rankID,
+		OpenID:   openId,
+		CPUserID: cpUserID,
 	}, nil)
 
 	return err
 }
 
 // QueryUserRank 查询用户排行情况
-func (c *Client) QueryUserRank(rankID string, openId string) (*RankMember, error) {
-	if rankID == "" || openId == "" {
+func (c *Client) QueryUserRank(rankID string, openId, cpUserID string) (*RankMember, error) {
+	if rankID == "" || (openId == "" && cpUserID == "") {
 		return nil, ErrInvalidOpenID
 	}
-
 	ret := &RankMember{}
 	resp := &response{Data: ret}
 
 	err := c.queryAndCheckResponse(apiQueryUserRank, &rankAPIArg{
-		RankID: rankID,
-		OpenID: openId,
+		RankID:   rankID,
+		OpenID:   openId,
+		CPUserID: cpUserID,
 	}, resp)
 
 	return ret, err
@@ -772,8 +798,8 @@ func (c *Client) GetRankList(rankID string, start, end int32) ([]*RankMember, er
 }
 
 // GetFriendRankList 查询好友排行榜
-func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember, error) {
-	if rankID == "" || openId == "" {
+func (c *Client) GetFriendRankList(rankID string, openId, cpUserID string) ([]*RankMember, error) {
+	if rankID == "" || (openId == "" && cpUserID == "") {
 		return nil, ErrInvalidOpenID
 	}
 
@@ -781,8 +807,9 @@ func (c *Client) GetFriendRankList(rankID string, openId string) ([]*RankMember,
 	resp := &response{Data: &ret}
 
 	err := c.queryAndCheckResponse(apiFriendsRank, &rankAPIArg{
-		RankID: rankID,
-		OpenID: openId,
+		RankID:   rankID,
+		OpenID:   openId,
+		CPUserID: cpUserID,
 	}, resp)
 
 	return ret, err
