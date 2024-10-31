@@ -5,6 +5,7 @@ package ruixuego
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	url2 "net/url"
 	"strconv"
@@ -82,6 +83,8 @@ const (
 	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
 
 	apiSyncEventPublicAttr = "/v1/sdkconfig/sync/event_attrs"
+
+	apiRiskRealAuthCheck = "/v1/risk/auth_check"
 )
 
 var defaultClient *Client
@@ -1007,4 +1010,29 @@ func (c *Client) UpdateCPuserID(openID, cpUserID string) error {
 		return fmt.Errorf(resp.Msg)
 	}
 	return nil
+}
+
+// RealAuth 实名检测
+func (c *Client) RealAuth(productID, idCard, realName string) (*RealAuthResponse, error) {
+	if len(productID) == 0 || len(idCard) == 0 || len(realName) == 0 {
+		return nil, ErrInvalidParam
+	}
+	arg := &RealAuthReq{}
+	arg.IDCard = idCard
+	arg.RealName = realName
+	arg.ProductID = productID
+	arg.CPID = config.CPID
+	data := &RealAuthResponse{}
+	resp := &response{
+		Data: data,
+	}
+	err := c.queryAndCheckResponse(apiRiskRealAuthCheck, arg, resp)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(resp.Code, resp.Msg)
+	if resp.Code != 0 {
+		return nil, fmt.Errorf(resp.Msg)
+	}
+	return data, nil
 }

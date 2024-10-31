@@ -18,7 +18,7 @@ func main() {
 	// SDK 初始化
 	err := ruixuego.Init(&ruixuego.Config{
 		APIDomain: "http://domain.com",
-		AppKeys:   map[string]map[string]string{testAppID: {testChannelID: testAppKey}},
+		AppKeys:   map[string]map[string]string{testProductID: {testChannelID: testAppKey}},
 		CPKey:     "00000000000000000000000",
 		CPID:      1000049,
 		BigData: &ruixuego.BigDataConfig{ // 要使用大数据埋点功能必须配置此参数
