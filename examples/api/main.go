@@ -15,11 +15,11 @@ const (
 
 func main() {
 	err := ruixuego.Init(&ruixuego.Config{
-		APIDomain:   "https://domain.com",
-		AppKeys:     map[string]map[string]string{testProductID: {testChannelID: testAppKey}},
-		CPKey:       "00000000000000000000000",
-		CPID:        1000049,
-		ServiceMark: "aabbcc",
+		APIDomain: "https://domain.com",
+		AppKeys:   map[string]map[string]string{testProductID: {testChannelID: testAppKey}},
+		CPKey:     "00000000000000000000000",
+		CPID:      1000049,
+		Region:    "", // 分区分服
 	})
 	if err != nil {
 		panic(err)

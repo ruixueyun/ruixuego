@@ -29,6 +29,7 @@ const (
 	headerProductID   = "ruixue-productid"
 	headerChannelID   = "ruixue-channelid"
 	headerServiceMark = "ruixue-servicemark" // 用于区分区服信息
+	headerNameRegion  = "ruixue-region"      // 支持分区
 )
 
 const (
@@ -130,6 +131,7 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerChannelID, config.ChannelID)
 	req.Header.Add(headerServiceMark, config.ServiceMark)
 	req.Header.Add(headerTimestamp, ts)
+	req.Header.Add(headerNameRegion, config.Region)
 	if len(withoutSign) == 0 {
 		req.Header.Add(headerSign, GetSign(traceID, ts))
 	}

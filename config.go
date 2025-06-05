@@ -27,6 +27,7 @@ type Config struct {
 	CPKey        string                       `yaml:"cpkey" json:"cpkey"`
 	ProductID    string                       `yaml:"product_id" json:"product_id"`
 	ChannelID    string                       `yaml:"channel_id,omitempty" json:"channel_id"`
+	Region       string                       `yaml:"region" json:"region"`
 	ServiceMark  string                       `yaml:"service_mark" json:"service_mark"`
 	BigData      *BigDataConfig               `yaml:"bigdata" json:"bigdata"`
 	_done        bool
