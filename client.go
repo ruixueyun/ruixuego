@@ -86,6 +86,9 @@ const (
 	apiSyncEventPublicAttr = "/v1/sdkconfig/sync/event_attrs"
 
 	apiRiskRealAuthCheck = "/v1/risk/auth_check"
+
+	apiOperationToolsExtensionExchange    = "/v1/operationtoolsapi/extension/exchange"
+	apiOperationToolsExtensionGameDisplay = "/v1/operationtoolsapi/extension/game_display"
 )
 
 var defaultClient *Client
@@ -1029,6 +1032,50 @@ func (c *Client) RealAuth(productID, idCard, realName string) (*RealAuthResponse
 		Data: data,
 	}
 	err := c.queryAndCheckResponse(apiRiskRealAuthCheck, arg, resp)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(resp.Code, resp.Msg)
+	if resp.Code != 0 {
+		return nil, fmt.Errorf(resp.Msg)
+	}
+	return data, nil
+}
+
+// ExtensionExchange 兑换福利码
+func (c *Client) ExtensionExchange(arg *ExtensionExchangeReq) ([]*ExtensionProp, error) {
+	if len(arg.CdKey) == 0 || len(arg.CpUserID) == 0 {
+		return nil, ErrInvalidParam
+	}
+	data := []*ExtensionProp{}
+	resp := &response{
+		Data: data,
+	}
+	err := c.queryAndCheckResponse(apiOperationToolsExtensionExchange, arg, resp)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(resp.Code, resp.Msg)
+	if resp.Code != 0 {
+		return nil, fmt.Errorf(resp.Msg)
+	}
+	return data, nil
+}
+
+// ExtensionGameDisplay 主播获取游戏内显示码
+func (c *Client) ExtensionGameDisplay(gameID string) (*GameDisplayWelfareCodeInfoExp, error) {
+	if gameID == "" {
+		return nil, ErrInvalidParam
+	}
+	dataValue := make(url2.Values)
+	dataValue.Add("game_id", gameID)
+	url := apiOperationToolsExtensionGameDisplay
+	uri := url + "?" + dataValue.Encode()
+	data := &GameDisplayWelfareCodeInfoExp{}
+	resp := &response{
+		Data: data,
+	}
+	err := c.queryAndCheckResponse(uri, nil, resp)
 	if err != nil {
 		return nil, err
 	}
