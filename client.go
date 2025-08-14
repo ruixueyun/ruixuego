@@ -9,6 +9,7 @@ import (
 	"net/http"
 	url2 "net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ruixueyun/ruixuego/bufferpool"
@@ -89,6 +90,8 @@ const (
 
 	apiOperationToolsExtensionExchange    = "/v1/operationtoolsapi/extension/exchange"
 	apiOperationToolsExtensionGameDisplay = "/v1/operationtoolsapi/extension/game_display"
+
+	apiOrderInfoByNo = "/v1/ke/api/trade_query" // 获取订单信息 --- IGNORE ---
 )
 
 var defaultClient *Client
@@ -1072,6 +1075,30 @@ func (c *Client) ExtensionGameDisplay(gameID string) (*GameDisplayWelfareCodeInf
 	url := apiOperationToolsExtensionGameDisplay
 	uri := url + "?" + dataValue.Encode()
 	data := &GameDisplayWelfareCodeInfoExp{}
+	resp := &response{
+		Data: data,
+	}
+	err := c.queryAndCheckResponse(uri, nil, resp)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(resp.Code, resp.Msg)
+	if resp.Code != 0 {
+		return nil, fmt.Errorf(resp.Msg)
+	}
+	return data, nil
+}
+
+// TradeOrderStatusByNo 平台订单状态
+func (c *Client) TradeOrderStatusByNo(orderNo string) (*OrderStatusRes, error) {
+	if orderNo == "" || !strings.HasSuffix(orderNo, "v1") {
+		return nil, ErrInvalidParam
+	}
+	dataValue := make(url2.Values)
+	dataValue.Add("order_no", orderNo)
+	url := apiOrderInfoByNo
+	uri := url + "?" + dataValue.Encode()
+	data := &OrderStatusRes{}
 	resp := &response{
 		Data: data,
 	}
