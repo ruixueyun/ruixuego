@@ -92,6 +92,8 @@ const (
 	apiOperationToolsExtensionGameDisplay = "/v1/operationtoolsapi/extension/game_display"
 
 	apiOrderInfoByNo = "/v1/ke/api/trade_query" // 获取订单信息 --- IGNORE ---
+
+	apiThirdPartySiyu = "/v1/thirdparty/service_api/check_user_in_siyu"
 )
 
 var defaultClient *Client
@@ -1111,4 +1113,23 @@ func (c *Client) TradeOrderStatusByNo(orderNo string) (*OrderStatusRes, error) {
 		return nil, fmt.Errorf(resp.Msg)
 	}
 	return data, nil
+}
+
+func (c *Client) CheckUserInSiyu(rxOpenID, cpUserID string) (*RespUserInSiyu, error) {
+	if cpUserID == "" && rxOpenID == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	ret := &RespUserInSiyu{}
+	resp := &response{Data: ret}
+
+	err := c.queryAndCheckResponse(apiThirdPartySiyu, &ArgsUserInSiyu{
+		RxOpenID: rxOpenID,
+		CPUserID: cpUserID,
+	}, resp)
+
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }
