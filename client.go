@@ -952,7 +952,6 @@ func (c *Client) IMSChannelUsersCount(channelConvIds []string) (map[string]int64
 
 // PusherPush 推送信息
 func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) error {
-
 	return c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, nil, productID, channelID)
 }
 
