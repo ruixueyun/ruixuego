@@ -1,0 +1,20 @@
+stages:
+  - sync
+
+mirror_to_github:
+  stage: sync
+  image:
+    name: alpine/git
+    entrypoint: [""]
+  only:
+    - master # 只在 master 分支有推送时触发
+  script:
+    - echo "开始同步到 GitHub..."
+    - git checkout master
+    - git remote add github https://${GH_MIRROR_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}.git
+    - git push github master --force --tags
+    - echo "同步完成!"
+  tags:
+    - master
+  variables:
+    GIT_STRATEGY: clone # 确保获取完整仓库历史
