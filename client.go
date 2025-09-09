@@ -951,8 +951,11 @@ func (c *Client) IMSChannelUsersCount(channelConvIds []string) (map[string]int64
 }
 
 // PusherPush 推送信息
-func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) error {
-	return c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, nil, productID, channelID)
+func (c *Client) PusherPush(req *PusherPushReq, productID, channelID string) (*PusherPushRes, error) {
+	ret := &PusherPushRes{}
+	resp := &response{Data: ret}
+	err := c.queryAndCheckResponseWithProductIDAndChannelID(apiPusherPush, req, resp, productID, channelID)
+	return ret, err
 }
 
 // RiskContentTextScan 内容安全文本检查（增强）
