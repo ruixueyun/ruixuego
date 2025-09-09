@@ -10,8 +10,7 @@ type PusherPushReq struct {
 }
 
 type PusherPushRes struct {
-	TaskID        uint64                 `json:"task_id"`                   // 任务ID 正式通道异步发送
-	DeviceTypeMap map[string]interface{} `json:"device_type_map,omitempty"` // 设备类型映射 测试通道异步发送 直接返回对应设备结果
+	DeviceTypeMap map[string]string `json:"device_type_map,omitempty"` // 仅测试通道返回，标记当前厂商状态
 }
 
 type PusherPushReqInfo struct {
