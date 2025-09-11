@@ -1117,6 +1117,7 @@ func (c *Client) TradeOrderStatusByNo(orderNo string) (*OrderStatusRes, error) {
 	return data, nil
 }
 
+// CheckUserInSiyu 检查用户是否在私域用户池
 func (c *Client) CheckUserInSiyu(rxOpenID, cpUserID string) (*RespUserInSiyu, error) {
 	if cpUserID == "" && rxOpenID == "" {
 		return nil, ErrInvalidOpenID
