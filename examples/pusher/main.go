@@ -14,8 +14,12 @@ func main() {
 		CPKey:     "00000000000000000000000",
 		CPID:      1000049,
 	})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	err = ruixuego.GetDefaultClient().PusherPush(&ruixuego.PusherPushReq{
+	res, err := ruixuego.GetDefaultClient().PusherPush(&ruixuego.PusherPushReq{
 		PushInfo: ruixuego.PusherPushReqInfo{
 			Title:          "鱼啊鱼啊鱼", // 推送标题
 			Content:        "鱼鱼快动呀", // 推送内容
@@ -31,5 +35,5 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("done")
+	fmt.Printf("%+v\n", res)
 }

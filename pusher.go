@@ -4,9 +4,15 @@ package ruixuego
 
 // PusherPushReq 推送请求参数
 type PusherPushReq struct {
-	PushInfo PusherPushReqInfo   `json:"push_info"`
-	Target   PusherPushReqTarget `json:"target"`
+	PushInfo       PusherPushReqInfo   `json:"push_info"`
+	Target         PusherPushReqTarget `json:"target"`
+	TargetUserType int32               `json:"target_user_type"` // 推送通道 0：正式通道，1：测试通道(vivo，honor、huawei，苹果 厂商支持)
 }
+
+type PusherPushRes struct {
+	DeviceTypeMap map[string]string `json:"device_type_map,omitempty"` // 仅测试通道返回，标记当前厂商状态
+}
+
 type PusherPushReqInfo struct {
 	Title          string `json:"title"`
 	Content        string `json:"content"`
