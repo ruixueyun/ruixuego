@@ -11,6 +11,7 @@ mirror_to_github:
   script:
     - echo "开始同步到 GitHub..."
     - git checkout master
+    - git tags
     - git remote add github https://${GH_MIRROR_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPO_NAME}.git
     - git push github master --force --tags
     - echo "同步完成!"
