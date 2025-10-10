@@ -30,6 +30,7 @@ type Config struct {
 	Region       string                       `yaml:"region" json:"region"`
 	ServiceMark  string                       `yaml:"service_mark" json:"service_mark"`
 	BigData      *BigDataConfig               `yaml:"bigdata" json:"bigdata"`
+	Language     string                       `yaml:"language" json:"language"`
 	_done        bool
 }
 
