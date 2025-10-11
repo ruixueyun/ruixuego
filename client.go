@@ -126,14 +126,6 @@ func (c *Client) WithCfgTrackTimeout(timeout time.Duration) *Client {
 	c.clientConfig.TrackTimeout = timeout
 	return c
 }
-func (c *Client) WithCfgCPID(cpid uint32) *Client {
-	c.clientConfig.CPID = cpid
-	return c
-}
-func (c *Client) WithCfgCPKey(cpKey string) *Client {
-	c.clientConfig.CPKey = cpKey
-	return c
-}
 func (c *Client) WithCfgProductID(productID string) *Client {
 	c.clientConfig.ProductID = productID
 	return c
