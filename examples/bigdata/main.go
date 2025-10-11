@@ -35,12 +35,14 @@ func main() {
 		fmt.Println("close result:", ruixuego.Close())
 	}()
 
+	dc := ruixuego.GetDefaultClient()
+
 	// 事件埋点
-	err = ruixuego.GetDefaultClient().Tracks(
+	err = dc.Tracks(
 		"abcdef",
 		"123456",
 		ruixuego.SetEvent("login"),
-		ruixuego.SetPreset(map[string]interface{}{
+		ruixuego.SetPreset(dc, map[string]interface{}{
 			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
@@ -52,11 +54,11 @@ func main() {
 		panic(err)
 	}
 	// 用户属性埋点
-	err = ruixuego.GetDefaultClient().Tracks(
+	err = dc.Tracks(
 		"abcdef",
 		"123456",
 		ruixuego.SetUserUpdateType("user_setonce"),
-		ruixuego.SetPreset(map[string]interface{}{
+		ruixuego.SetPreset(dc, map[string]interface{}{
 			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key

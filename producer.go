@@ -40,9 +40,9 @@ type Producer struct {
 }
 
 // SetPreset 预制属性
-func SetPreset(preset map[string]interface{}) BigdataOptions {
+func SetPreset(client *Client, preset map[string]interface{}) BigdataOptions {
 	return func(logData *BigDataLog) error {
-		cpID := extractCPID(preset)
+		cpID := extractCPID(client, preset)
 		if cpID == 0 {
 			return ErrInvalidCPID
 		}
@@ -94,7 +94,7 @@ func SetUserUpdateType(updateType string) BigdataOptions {
 //	devicecode 设备码
 //	distinctID 用户标识, 通常为瑞雪 OpenID
 //	opts 埋点动态参数设置
-func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions) error {
+func (p *Producer) Tracks(cpid uint32, devicecode, distinctID string, opts ...BigdataOptions) error {
 	if devicecode == "" && distinctID == "" {
 		return ErrInvalidDevicecode
 	}
@@ -118,10 +118,10 @@ func (p *Producer) Tracks(devicecode, distinctID string, opts ...BigdataOptions)
 		return ErrInvalidType
 	}
 	if logData.CPID == 0 {
-		if config.CPID == 0 {
+		if cpid == 0 {
 			return ErrInvalidCPID
 		}
-		logData.CPID = config.CPID
+		logData.CPID = cpid
 	}
 	if logData.PlatformID <= 0 {
 		logData.PlatformID = 10
@@ -161,13 +161,13 @@ func extractInt32(properties map[string]interface{}, key string) int32 {
 	return 0
 }
 
-func extractCPID(properties map[string]interface{}) uint32 {
+func extractCPID(client *Client, properties map[string]interface{}) uint32 {
 	if t, ok := properties[PresetKeyCPID]; ok {
 		if v, ok := t.(uint32); ok {
 			return v
 		}
 	}
-	return config.CPID
+	return client.clientConfig.CPID
 }
 
 func extractUUID(properties map[string]interface{}) string {

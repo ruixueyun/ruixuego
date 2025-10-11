@@ -20,16 +20,16 @@ var (
 )
 
 // GetSign 获取请求签名，该签名通过 sha1(TraceID+Timestamp+CPKey) 得来
-func GetSign(traceID, ts string) string {
+func GetSign(cpKey string, traceID, ts string) string {
 	h := sha1Pool.Get().(hash.Hash)
-	_, _ = h.Write([]byte(traceID + ts + config.CPKey))
+	_, _ = h.Write([]byte(traceID + ts + cpKey))
 	ret := hex.EncodeToString(h.Sum(nil))
 	h.Reset()
 	sha1Pool.Put(h)
 	return ret
 }
 
-func GetLoginResultSign(result *LoginResult, signFields []string) string {
+func GetLoginResultSign(cpKey string, result *LoginResult, signFields []string) string {
 	params := url.Values{}
 	for _, field := range signFields {
 		switch field {
@@ -48,7 +48,7 @@ func GetLoginResultSign(result *LoginResult, signFields []string) string {
 		}
 	}
 
-	signSource := params.Encode() + config.CPKey
+	signSource := params.Encode() + cpKey
 
 	h := sha1Pool.Get().(hash.Hash)
 	h.Write([]byte(signSource))
