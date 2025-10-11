@@ -650,7 +650,7 @@ func (c *Client) LBSRadius(
 //	opts: 动态参数设置
 func (c *Client) Tracks(
 	devicecode, distinctID string, opts ...BigdataOptions) error {
-	return c.producer.Tracks(c.clientConfig.CPID, devicecode, distinctID, opts...)
+	return c.producer.Tracks(devicecode, distinctID, opts...)
 }
 
 // track 将埋点数据上报给瑞雪云

@@ -42,7 +42,7 @@ func main() {
 		"abcdef",
 		"123456",
 		ruixuego.SetEvent("login"),
-		ruixuego.SetPreset(dc, map[string]interface{}{
+		ruixuego.SetPreset(map[string]interface{}{
 			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
@@ -58,7 +58,7 @@ func main() {
 		"abcdef",
 		"123456",
 		ruixuego.SetUserUpdateType("user_setonce"),
-		ruixuego.SetPreset(dc, map[string]interface{}{
+		ruixuego.SetPreset(map[string]interface{}{
 			ruixuego.PresetKeyProductID:    "123", // 设置 ProducdID 请用预置 Key
 			ruixuego.PresetKeyChannelID:    "456", // 设置渠道 ID 请用预置 Key
 			ruixuego.PresetKeySubChannelID: "789", // 设置子渠道 ID 请用预置 Key
