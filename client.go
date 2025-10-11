@@ -1103,7 +1103,10 @@ func (c *Client) ExtensionExchange(arg *ExtensionExchangeReq) ([]*ExtensionProp,
 	if resp.Code != 0 {
 		return nil, fmt.Errorf(resp.Msg)
 	}
-	return data, nil
+	if resp.Data == nil {
+		return nil, nil
+	}
+	return resp.Data.([]*ExtensionProp), nil
 }
 
 // ExtensionGameDisplay 主播获取游戏内显示码
