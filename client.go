@@ -99,8 +99,7 @@ var defaultClient *Client
 
 func NewClient() (c *Client, err error) {
 	c = &Client{
-		httpClient:   NewHTTPClient(config.Timeout, config.Concurrency),
-		clientConfig: *config, // 初始化配置
+		httpClient: NewHTTPClient(config.Timeout, config.Concurrency),
 	}
 
 	if config.BigData != nil {
@@ -113,34 +112,60 @@ func NewClient() (c *Client, err error) {
 }
 
 type Client struct {
-	httpClient   *HTTPClient
-	producer     *Producer
-	clientConfig Config
+	httpClient *HTTPClient
+	producer   *Producer
+
+	tempProductID *string //  产品id 临时设置生效一次
+	tempChannelID *string //  渠道ID 临时设置生效一次
+	tempRegion    *string //  区服 临时设置生效一次
+	tempLanguage  *string //  语言 临时设置生效一次
 }
 
-func (c *Client) WithCfgAPIDomain(apiDomain string) *Client {
-	c.clientConfig.APIDomain = apiDomain
+func (c *Client) WithOnceProductID(productID string) *Client {
+	c.tempProductID = &productID
 	return c
 }
-func (c *Client) WithCfgTrackTimeout(timeout time.Duration) *Client {
-	c.clientConfig.TrackTimeout = timeout
+
+func (c *Client) GetProductID() string {
+	if c.tempProductID != nil {
+		return *c.tempProductID
+	}
+	return config.ProductID
+}
+
+func (c *Client) WithOnceChannelID(channelID string) *Client {
+	c.tempChannelID = &channelID
 	return c
 }
-func (c *Client) WithCfgProductID(productID string) *Client {
-	c.clientConfig.ProductID = productID
+
+func (c *Client) GetChannelID() string {
+	if c.tempChannelID != nil {
+		return *c.tempChannelID
+	}
+	return config.ChannelID
+}
+
+func (c *Client) WithOnceRegion(region string) *Client {
+	c.tempRegion = &region
 	return c
 }
-func (c *Client) WithCfgChannelID(channelID string) *Client {
-	c.clientConfig.ChannelID = channelID
+
+func (c *Client) GetRegion() string {
+	if c.tempRegion != nil {
+		return *c.tempRegion
+	}
+	return config.Region
+}
+func (c *Client) WithOnceLanguage(language string) *Client {
+	c.tempLanguage = &language
 	return c
 }
-func (c *Client) WithCfgRegion(region string) *Client {
-	c.clientConfig.Region = region
-	return c
-}
-func (c *Client) WithCfgLanguage(language string) *Client {
-	c.clientConfig.Language = language
-	return c
+
+func (c *Client) GetLanguage() string {
+	if c.tempLanguage != nil {
+		return *c.tempLanguage
+	}
+	return config.Language
 }
 
 // Close SDK 客户端在关闭时必须显式调用该方法, 已保障数据不会丢失
@@ -153,7 +178,7 @@ func (c *Client) Close() error {
 
 func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	traceID, cpID, ts := uuid.New().String(),
-		strconv.FormatUint(uint64(c.clientConfig.CPID), 10),
+		strconv.FormatUint(uint64(config.CPID), 10),
 		strconv.FormatInt(time.Now().Unix(), 10)
 
 	req := GetRequest()
@@ -161,16 +186,16 @@ func (c *Client) getRequest(withoutSign ...bool) (string, *fasthttp.Request) {
 	req.Header.Add(headerVersion, Version)
 	req.Header.Add(headerTraceID, traceID)
 	req.Header.Add(headerCPID, cpID)
-	req.Header.Add(headerProductID, c.clientConfig.ProductID)
-	req.Header.Add(headerChannelID, c.clientConfig.ChannelID)
-	req.Header.Add(headerServiceMark, c.clientConfig.ServiceMark)
+	req.Header.Add(headerProductID, c.GetProductID())
+	req.Header.Add(headerChannelID, c.GetChannelID())
+	req.Header.Add(headerServiceMark, config.ServiceMark)
 	req.Header.Add(headerTimestamp, ts)
-	req.Header.Add(headerNameRegion, c.clientConfig.Region)
-	if c.clientConfig.Language != "" {
-		req.Header.Add(headerLanguage, c.clientConfig.Language)
+	req.Header.Add(headerNameRegion, c.GetRegion())
+	if c.GetLanguage() != "" {
+		req.Header.Add(headerLanguage, c.GetLanguage())
 	}
 	if len(withoutSign) == 0 {
-		req.Header.Add(headerSign, GetSign(c.clientConfig.CPKey, traceID, ts))
+		req.Header.Add(headerSign, GetSign(config.CPKey, traceID, ts))
 	}
 
 	return traceID, req
@@ -225,12 +250,20 @@ func (c *Client) queryAndCheckResponse(
 func (c *Client) query(
 	path string, arg, ret interface{}, compress ...bool) (string, error) {
 	traceID, req := c.getRequest()
-	_, err := c.queryCode(path, req, c.clientConfig.Timeout, arg, ret, compress...)
+	_, err := c.queryCode(path, req, config.Timeout, arg, ret, compress...)
 	return traceID, err
 }
 
 func (c *Client) queryCode(
 	path string, req *fasthttp.Request, timeout time.Duration, arg, ret interface{}, compress ...bool) (int, error) {
+
+	// 重置一次性设置
+	defer func() {
+		c.tempProductID = nil
+		c.tempChannelID = nil
+		c.tempRegion = nil
+		c.tempLanguage = nil
+	}()
 
 	code := defaultStatus
 
@@ -262,7 +295,7 @@ func (c *Client) queryCode(
 	}
 
 	resp, err := c.httpClient.DoRequestWithTimeout(
-		c.clientConfig.APIDomain+path, req, timeout)
+		config.APIDomain+path, req, timeout)
 	if err != nil {
 		return code, err
 	}
@@ -313,7 +346,7 @@ func (c *Client) queryWithProductIDAndChannelID(
 	path string, arg, ret interface{}, productID, channelID string, compress ...bool) (string, error) {
 	traceID, req := c.getRequest()
 	c.queryAddProductIDAndChannelID(req, productID, channelID)
-	_, err := c.queryCode(path, req, c.clientConfig.Timeout, arg, ret, compress...)
+	_, err := c.queryCode(path, req, config.Timeout, arg, ret, compress...)
 	return traceID, err
 }
 func (c *Client) queryAddProductIDAndChannelID(
@@ -662,7 +695,7 @@ func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
 	traceID, req := c.getRequest(true)
 	ret := &response{}
 	req.Header.Add(headerDataCount, Itoa(logCount))
-	code, err := c.queryCode(apiBigDataTrack, req, c.clientConfig.TrackTimeout, data, ret, compress)
+	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, compress)
 	if err != nil {
 		return code, errWithTraceID(err, traceID)
 	}
@@ -694,10 +727,10 @@ func (c *Client) SyncTrack(devicecode, distinctID string, opts ...BigdataOptions
 		return ErrInvalidType
 	}
 	if logData.CPID == 0 {
-		if c.clientConfig.CPID == 0 {
+		if config.CPID == 0 {
 			return ErrInvalidCPID
 		}
-		logData.CPID = c.clientConfig.CPID
+		logData.CPID = config.CPID
 	}
 	if logData.PlatformID <= 0 {
 		logData.PlatformID = 10
@@ -719,7 +752,7 @@ func (c *Client) SyncTrack(devicecode, distinctID string, opts ...BigdataOptions
 	traceID, req := c.getRequest(true)
 	ret := &response{}
 	req.Header.Add(headerDataCount, Itoa(1))
-	_, err = c.queryCode(apiBigDataTrack, req, c.clientConfig.TrackTimeout, b, ret, !c.clientConfig.BigData.DisableCompress)
+	_, err = c.queryCode(apiBigDataTrack, req, config.TrackTimeout, b, ret, !config.BigData.DisableCompress)
 	if err != nil {
 		return errWithTraceID(err, traceID)
 	}
@@ -909,7 +942,7 @@ func (c *Client) IMSSendMessage(req *IMSMessage) (*IMSMessageAck, error) {
 	if req.ConvType == 0 {
 		req.ConvType = convType
 	}
-	req.CPID = c.clientConfig.CPID
+	req.CPID = config.CPID
 	err := c.queryAndCheckResponse(apiIMSSendMessage, req, resp)
 	return ret, err
 }
@@ -1062,7 +1095,7 @@ func (c *Client) RealAuth(productID, idCard, realName string) (*RealAuthResponse
 	arg.IDCard = idCard
 	arg.RealName = realName
 	arg.ProductID = productID
-	arg.CPID = c.clientConfig.CPID
+	arg.CPID = config.CPID
 	data := &RealAuthResponse{}
 	resp := &response{
 		Data: data,
