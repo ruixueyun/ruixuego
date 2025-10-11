@@ -35,8 +35,10 @@ func main() {
 		fmt.Println("close result:", ruixuego.Close())
 	}()
 
+	dc := ruixuego.GetDefaultClient()
+
 	// 事件埋点
-	err = ruixuego.GetDefaultClient().Tracks(
+	err = dc.Tracks(
 		"abcdef",
 		"123456",
 		ruixuego.SetEvent("login"),
@@ -52,7 +54,7 @@ func main() {
 		panic(err)
 	}
 	// 用户属性埋点
-	err = ruixuego.GetDefaultClient().Tracks(
+	err = dc.Tracks(
 		"abcdef",
 		"123456",
 		ruixuego.SetUserUpdateType("user_setonce"),
