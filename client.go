@@ -5,15 +5,16 @@ package ruixuego
 import (
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/ruixueyun/ruixuego/bufferpool"
-	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
 	url2 "net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/ruixueyun/ruixuego/bufferpool"
+	"github.com/valyala/fasthttp"
 )
 
 const defaultStatus = -1
@@ -33,66 +34,56 @@ const (
 )
 
 const (
-	apiSetCustom             = "/v1/social/serverapi/setcustom"
-	apiAddRelation           = "/v1/social/serverapi/addrelation"
-	apiDelRelation           = "/v1/social/serverapi/deleterelation"
-	apiUpdateRelationRemarks = "/v1/social/serverapi/updaterelationremarks"
-	apiRelationList          = "/v1/social/serverapi/relationlist"
-	apiHasRelation           = "/v1/social/serverapi/hasrelation"
-	apiAddFriend             = "/v1/social/serverapi/addfriend"
-	apiDelFriend             = "/v1/social/serverapi/delfriend"
-	apiUpdateFriendRemarks   = "/v1/social/serverapi/updatefriendremarks"
-	apiFriendList            = "/v1/social/serverapi/friendlist"
-	apiIsFriend              = "/v1/social/serverapi/isfriend"
-	apiLBSUpdate             = "/v1/social/serverapi/lbsupdate"
-	apiLBSDelete             = "/v1/social/serverapi/lbsdelete"
-	apiLBSRadius             = "/v1/social/serverapi/lbsradius"
-	apiCreateRank            = "/v1/social/serverapi/createrank"
-	apiCloseRank             = "/v1/social/serverapi/closerank"
-	apiRankAddScore          = "/v1/social/serverapi/rankaddscore"
-	apiRankSetScore          = "/v1/social/serverapi/ranksetscore"
-	apiQueryUserRank         = "/v1/social/serverapi/queryuserrank"
-	apiGetRankList           = "/v1/social/serverapi/getranklist"
-	apiFriendsRank           = "/v1/social/serverapi/friendsrank"
-	apiRankDeleteUser        = "/v1/social/serverapi/deleteuserscore"
-	apiGetRealtionUser       = "/v1/social/serverapi/getrelationuser"
-	apiRankDetail            = "/v1/social/serverapi/rankdetail"
-	apiAllRankIDList         = "/v1/social/serverapi/getallranklist"
-
-	apiBigDataTrack = "/v1/data/api/track"
-
-	apiIMSLogin                      = "/v1/ims/server/login"
-	apiIMSSendMessage                = "/v1/ims/server/sendmessage"
-	apiIMSGetHistory                 = "/v1/ims/server/gethistory"
-	apiIMSCreateConversation         = "/v1/ims/server/createconversation"
-	apiIMSUpdateConversation         = "/v1/ims/server/updateconversation"
-	apiIMSDeleteConversation         = "/v1/ims/server/deleteconversation"
-	apiIMSGetConversation            = "/v1/ims/server/getconversation"
-	apiIMSJoinConversation           = "/v1/ims/server/joinconversation"
-	apiIMSLeaveConversation          = "/v1/ims/server/leaveconversation"
-	apiIMSUpdateConversationUserData = "/v1/ims/server/updateconversatonuserdata"
-	apiIMSConversationUserList       = "/v1/ims/server/conversationuserlist"
-	apiIMSChannelUsersCount          = "/v1/ims/server/getchanneluserscount"
-
-	apiPusherPush = "/v1/pusher/push/push"
-
-	apiRiskTextScan  = "/v1/risk/content/text/scan"
-	apiRiskImageScan = "/v1/risk/content/image/scan"
-
-	apiReportCustomAction = "/v1/attribution/user/custom_action"
-
-	apiPassportUpdateCPUserID = "/v1/passport/users/update_cpuserid"
-
-	apiSyncEventPublicAttr = "/v1/sdkconfig/sync/event_attrs"
-
-	apiRiskRealAuthCheck = "/v1/risk/auth_check"
-
+	apiSetCustom                          = "/v1/social/serverapi/setcustom"
+	apiAddRelation                        = "/v1/social/serverapi/addrelation"
+	apiDelRelation                        = "/v1/social/serverapi/deleterelation"
+	apiUpdateRelationRemarks              = "/v1/social/serverapi/updaterelationremarks"
+	apiRelationList                       = "/v1/social/serverapi/relationlist"
+	apiHasRelation                        = "/v1/social/serverapi/hasrelation"
+	apiAddFriend                          = "/v1/social/serverapi/addfriend"
+	apiDelFriend                          = "/v1/social/serverapi/delfriend"
+	apiUpdateFriendRemarks                = "/v1/social/serverapi/updatefriendremarks"
+	apiFriendList                         = "/v1/social/serverapi/friendlist"
+	apiIsFriend                           = "/v1/social/serverapi/isfriend"
+	apiLBSUpdate                          = "/v1/social/serverapi/lbsupdate"
+	apiLBSDelete                          = "/v1/social/serverapi/lbsdelete"
+	apiLBSRadius                          = "/v1/social/serverapi/lbsradius"
+	apiCreateRank                         = "/v1/social/serverapi/createrank"
+	apiCloseRank                          = "/v1/social/serverapi/closerank"
+	apiRankAddScore                       = "/v1/social/serverapi/rankaddscore"
+	apiRankSetScore                       = "/v1/social/serverapi/ranksetscore"
+	apiQueryUserRank                      = "/v1/social/serverapi/queryuserrank"
+	apiGetRankList                        = "/v1/social/serverapi/getranklist"
+	apiFriendsRank                        = "/v1/social/serverapi/friendsrank"
+	apiRankDeleteUser                     = "/v1/social/serverapi/deleteuserscore"
+	apiGetRealtionUser                    = "/v1/social/serverapi/getrelationuser"
+	apiRankDetail                         = "/v1/social/serverapi/rankdetail"
+	apiAllRankIDList                      = "/v1/social/serverapi/getallranklist"
+	apiBigDataTrack                       = "/v1/data/api/track"
+	apiIMSLogin                           = "/v1/ims/server/login"
+	apiIMSSendMessage                     = "/v1/ims/server/sendmessage"
+	apiIMSGetHistory                      = "/v1/ims/server/gethistory"
+	apiIMSCreateConversation              = "/v1/ims/server/createconversation"
+	apiIMSUpdateConversation              = "/v1/ims/server/updateconversation"
+	apiIMSDeleteConversation              = "/v1/ims/server/deleteconversation"
+	apiIMSGetConversation                 = "/v1/ims/server/getconversation"
+	apiIMSJoinConversation                = "/v1/ims/server/joinconversation"
+	apiIMSLeaveConversation               = "/v1/ims/server/leaveconversation"
+	apiIMSUpdateConversationUserData      = "/v1/ims/server/updateconversatonuserdata"
+	apiIMSConversationUserList            = "/v1/ims/server/conversationuserlist"
+	apiIMSChannelUsersCount               = "/v1/ims/server/getchanneluserscount"
+	apiPusherPush                         = "/v1/pusher/push/push"
+	apiRiskTextScan                       = "/v1/risk/content/text/scan"
+	apiRiskImageScan                      = "/v1/risk/content/image/scan"
+	apiReportCustomAction                 = "/v1/attribution/user/custom_action"
+	apiPassportUpdateCPUserID             = "/v1/passport/users/update_cpuserid"
+	apiSyncEventPublicAttr                = "/v1/sdkconfig/sync/event_attrs"
+	apiRiskRealAuthCheck                  = "/v1/risk/auth_check"
 	apiOperationToolsExtensionExchange    = "/v1/operationtoolsapi/extension/exchange"
 	apiOperationToolsExtensionGameDisplay = "/v1/operationtoolsapi/extension/game_display"
-
-	apiOrderInfoByNo = "/v1/ke/api/trade_query" // 获取订单信息 --- IGNORE ---
-
-	apiThirdPartySiyu = "/v1/thirdparty/service_api/check_user_in_siyu"
+	apiOrderInfoByNo                      = "/v1/ke/api/trade_query" // 获取订单信息 --- IGNORE ---
+	apiThirdPartySiyu                     = "/v1/thirdparty/service_api/check_user_in_siyu"
+	apiReportCPRole                       = "/v1/report/cp/role"
 )
 
 var defaultClient *Client
@@ -119,6 +110,12 @@ type Client struct {
 	tempChannelID *string //  渠道ID 临时设置生效一次
 	tempRegion    *string //  区服 临时设置生效一次
 	tempLanguage  *string //  语言 临时设置生效一次
+	tempMethod    *string //  方法 临时设置生效一次
+}
+
+func (c *Client) WithOnceMethod(method string) *Client {
+	c.tempMethod = &method
+	return c
 }
 
 func (c *Client) WithOnceProductID(productID string) *Client {
@@ -263,6 +260,7 @@ func (c *Client) queryCode(
 		c.tempChannelID = nil
 		c.tempRegion = nil
 		c.tempLanguage = nil
+		c.tempMethod = nil
 	}()
 
 	code := defaultStatus
@@ -292,6 +290,11 @@ func (c *Client) queryCode(
 		} else {
 			req.SetBody(b)
 		}
+	}
+
+	// 临时设置生效一次
+	if c.tempMethod != nil && *c.tempMethod != "" {
+		req.Header.SetMethod(*c.tempMethod)
 	}
 
 	resp, err := c.httpClient.DoRequestWithTimeout(
@@ -1200,4 +1203,79 @@ func (c *Client) CheckUserInSiyu(rxOpenID, cpUserID string) (*RespUserInSiyu, er
 		return nil, err
 	}
 	return ret, nil
+}
+
+// CPRoleAdd 角色上报
+func (c *Client) CPRoleAdd(args *CPRoleInfo) error {
+	if args == nil || args.RxOpenID == "" || args.RegionTag == "" || args.CPRoleID == "" {
+		return ErrInvalidOpenID
+	}
+	resp := &response{}
+	err := c.queryAndCheckResponse(apiReportCPRole, args, resp)
+
+	if err != nil {
+		return err
+	}
+	if resp.Code != 0 {
+		return fmt.Errorf("code:%v,msg:%v", resp.Code, resp.Msg)
+	}
+	return nil
+}
+
+// CPRoleUpdate 角色更新
+func (c *Client) CPRoleUpdate(args *CPRoleInfo) error {
+	if args == nil || args.RxOpenID == "" || args.RegionTag == "" || args.CPRoleID == "" {
+		return ErrInvalidOpenID
+	}
+	resp := &response{}
+	err := c.WithOnceMethod("PUT").queryAndCheckResponse(apiReportCPRole, args, resp)
+
+	if err != nil {
+		return err
+	}
+	if resp.Code != 0 {
+		return fmt.Errorf("code:%v,msg:%v", resp.Code, resp.Msg)
+	}
+	return nil
+}
+
+// CPRoleDel 角色删除
+func (c *Client) CPRoleDel(args *CPRoleInfoDel) error {
+	if args == nil || args.RxOpenID == "" || args.RegionTag == "" || args.CPRoleID == "" {
+		return ErrInvalidOpenID
+	}
+	resp := &response{}
+	err := c.WithOnceMethod("DELETE").queryAndCheckResponse(apiReportCPRole, args, resp)
+
+	if err != nil {
+		return err
+	}
+	if resp.Code != 0 {
+		return fmt.Errorf("code:%v,msg:%v", resp.Code, resp.Msg)
+	}
+	return nil
+}
+
+// CPRoleListByOpenID 通过openid查询角色列表
+func (c *Client) CPRoleListByOpenID(args *CPRoleList) ([]*CPRoleRes, error) {
+	if args == nil || args.RxOpenID == "" {
+		return nil, ErrInvalidOpenID
+	}
+
+	type CPRoleListRes struct {
+		List []*CPRoleRes `json:"list"`
+	}
+
+	ret := &CPRoleListRes{}
+	resp := &response{Data: ret}
+	link := apiReportCPRole + "/list?rx_openid=" + args.RxOpenID + "&extension=" + args.Extension
+	err := c.WithOnceMethod("GET").queryAndCheckResponse(link, args, resp)
+
+	if err != nil {
+		return nil, err
+	}
+	if resp.Code != 0 {
+		return nil, fmt.Errorf("code:%v,msg:%v", resp.Code, resp.Msg)
+	}
+	return ret.List, nil
 }

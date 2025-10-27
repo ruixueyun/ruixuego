@@ -114,3 +114,29 @@ type RespRankDetail struct {
 type RespAllRankID struct {
 	RankIDList []string `json:"list"`
 }
+
+type CPRoleInfo struct {
+	RxOpenID  string                 `json:"rx_openid"`           // 瑞雪openid
+	RegionTag string                 `json:"region_tag"`          // 区服id
+	CPRoleID  string                 `json:"cp_role_id"`          // 角色id
+	Extension map[string]interface{} `json:"extension,omitempty"` // 扩展字段:json格式
+}
+
+type CPRoleInfoDel struct {
+	RxOpenID  string `json:"rx_openid"`  // 瑞雪openid
+	RegionTag string `json:"region_tag"` // 区服id
+	CPRoleID  string `json:"cp_role_id"` // 角色id
+}
+
+type CPRoleList struct {
+	RxOpenID  string `json:"rx_openid"` // 瑞雪openid
+	Extension string `json:"extension"` // *:全部、nickname,avatar,sex:指定字段 、空:忽略
+}
+
+type CPRoleRes struct {
+	RxOpenID   string                 `json:"rx_openid"`           // 瑞雪openid
+	RegionTag  string                 `json:"region_tag"`          // 区服id
+	CPRoleID   string                 `json:"cp_role_id"`          // 角色id
+	ReportTime int64                  `json:"report_time"`         // 上报时间
+	Extension  map[string]interface{} `json:"extension,omitempty"` // 扩展字段:json格式
+}
