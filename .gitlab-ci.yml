@@ -7,7 +7,7 @@ mirror_to_github:
     name: alpine/git
     entrypoint: [""]
   only:
-    - master # 只在 master 分支有推送时触发
+    - tags
   script:
     - echo "开始同步到 GitHub..."
     - git checkout master
