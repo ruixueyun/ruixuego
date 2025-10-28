@@ -93,6 +93,7 @@ type MediaResp struct {
 }
 
 type RiskContentImageScanReq struct {
+	ReqHeader
 	URL string `json:"url"`
 }
 
@@ -108,6 +109,7 @@ type Results struct {
 }
 
 type RiskContentTextScanReq struct {
+	ReqHeader
 	OpenID  string `json:"open_id"`                    // 微信小程序openid
 	Scene   string `json:"scene" binding:"required"`   // 场景 nick_name: 昵称；private_chat: 私聊；public_chat: 公聊评论
 	Content string `json:"content" binding:"required"` // 文本内容
@@ -121,6 +123,7 @@ type RiskContentTextScanResp struct {
 
 // RealAuthReq 实名请求
 type RealAuthReq struct {
+	ReqHeader
 	CPID      uint32 `json:"cpid"`       // cpid
 	ProductID string `json:"product_id"` // 产品id
 	IDCard    string `json:"id_card"`    // 身份证

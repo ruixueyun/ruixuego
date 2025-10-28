@@ -27,3 +27,10 @@ type PusherPushReqTarget struct {
 	Tag    string   `json:"tag"`
 	Alias  []string `json:"alias"`
 }
+
+type ReqPusher struct {
+	ReqHeader
+	Req       *PusherPushReq
+	ProductID string
+	ChannelID string
+}

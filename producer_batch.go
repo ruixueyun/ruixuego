@@ -8,27 +8,27 @@ import (
 	"time"
 )
 
-func newBatchWriter(c *Client, conf *BigDataConfig) *batchWriter {
+func newBatchWriter(t TrackInterface, conf *BigDataConfig) *batchWriter {
 	return &batchWriter{
-		conf:        conf,
-		client:      c,
-		bufferMutex: new(sync.RWMutex),
-		buffer:      make([]*BigDataLog, 0, conf.BatchSize),
-		cacheMutex:  new(sync.RWMutex),
-		cache:       make([]*BigDataLog, 0, conf.BatchSize*2),
-		closed:      make(chan struct{}, 1),
+		conf:           conf,
+		trackInterface: t,
+		bufferMutex:    new(sync.RWMutex),
+		buffer:         make([]*BigDataLog, 0, conf.BatchSize),
+		cacheMutex:     new(sync.RWMutex),
+		cache:          make([]*BigDataLog, 0, conf.BatchSize*2),
+		closed:         make(chan struct{}, 1),
 	}
 }
 
 type batchWriter struct {
-	conf        *BigDataConfig
-	client      *Client
-	bufferMutex *sync.RWMutex
-	buffer      []*BigDataLog
-	cacheMutex  *sync.RWMutex
-	cache       []*BigDataLog
-	gzipPool    *gzipPool
-	closed      chan struct{}
+	conf           *BigDataConfig
+	trackInterface TrackInterface
+	bufferMutex    *sync.RWMutex
+	buffer         []*BigDataLog
+	cacheMutex     *sync.RWMutex
+	cache          []*BigDataLog
+	gzipPool       *gzipPool
+	closed         chan struct{}
 }
 
 func (bw *batchWriter) Init() error {
@@ -97,9 +97,13 @@ func (bw *batchWriter) Flush() error {
 
 	code := 0
 	for i := 0; i < 3; i++ {
-		code, err = bw.client.track(b, n, !bw.conf.DisableCompress)
+		code, err = bw.trackInterface.Track(&ReqTrack{
+			Data:     b,
+			LogCount: n,
+			Compress: !bw.conf.DisableCompress,
+		})
 		if err != nil {
-			logger.Errorf("failed to send track log: [%d] %s, data: %s", code, err.Error(), b)
+			logger.Errorf("failed to send Track log: [%d] %s, data: %s", code, err.Error(), b)
 			if code != http.StatusOK {
 				continue
 			}

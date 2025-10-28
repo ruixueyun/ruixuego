@@ -1,6 +1,7 @@
 package ruixuego
 
 type ExtensionExchangeReq struct {
+	ReqHeader
 	CdKey    string `json:"cdkey"`
 	OpenID   string `json:"open_id"`
 	CpUserID string `json:"cp_user_id"`

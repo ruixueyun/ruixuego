@@ -4,6 +4,7 @@ package ruixuego
 
 // IMSLoginReq 登录请求参数
 type IMSLoginReq struct {
+	ReqHeader
 	UserID     string `json:"user_id"`     // 用户在某 CP 下的唯一标识符
 	ProductID  string `json:"product_id"`  // 产品 ID
 	ChannelID  string `json:"channel_id"`  // 渠道 ID
@@ -23,6 +24,7 @@ type IMSLoginResp struct {
 
 // IMSMessage 聊天信息定义
 type IMSMessage struct {
+	ReqHeader
 	MilliTS        int64             `json:"milli_ts,omitempty"`
 	Attr           int64             `json:"attr,omitempty"`
 	Option         int64             `json:"option,omitempty"`
@@ -57,6 +59,7 @@ type IMSMessageAck struct {
 
 // IMSHistoryReq 历史聊天记录请求参数
 type IMSHistoryReq struct {
+	ReqHeader
 	ConversationID string `json:"conversation_id,omitempty"`
 	StartMsgID     string `json:"start_msg_id,omitempty"`
 	FetchCount     int32  `json:"fetch_count,omitempty"`
@@ -71,6 +74,7 @@ type IMSHistoryResp struct {
 
 // IMSCreateConvReq 创建会话请求参数
 type IMSCreateConvReq struct {
+	ReqHeader
 	ConversationID string            `json:"conversation_id"`   // 会话 ID
 	Option         int64             `json:"option,omitempty"`  // 会话选项
 	ConvType       int32             `json:"conv_type"`         // 会话类型
@@ -90,6 +94,7 @@ type MemberInfo struct {
 
 // IMSUpdateConvReq 更新会话信息请求参数
 type IMSUpdateConvReq struct {
+	ReqHeader
 	ConversationID string            `json:"conversation_id"`   // 会话 ID
 	Option         int64             `json:"option,omitempty"`  // 会话选项
 	Creator        string            `json:"creator,omitempty"` // 会话创建者，即单聊的发起者或群的创建者
@@ -99,12 +104,14 @@ type IMSUpdateConvReq struct {
 
 // IMSConvDeleteReq 删除会话请求参数
 type IMSConvDeleteReq struct {
+	ReqHeader
 	ConversationID string `json:"conversation_id"` // 会话 ID
 	UserID         string `json:"user_id"`         // 操作人用户 ID
 }
 
 // IMSGetConversationReq 获取会话信息请求参数
 type IMSGetConversationReq struct {
+	ReqHeader
 	ConversationID string `json:"conversation_id"` // 会话 ID
 	UserID         string `json:"user_id"`         // 操作人用户 ID
 }
@@ -129,6 +136,7 @@ type IMSConversation struct {
 
 // IMSJoinConversationReq 加入会话请求参数
 type IMSJoinConversationReq struct {
+	ReqHeader
 	ConversationID string            `json:"conversation_id,omitempty"` // 会话 ID
 	UserID         string            `json:"user_id"`                   // 用户 ID
 	Option         int64             `json:"option,omitempty"`          // 用户在会话中的选项参数
@@ -138,6 +146,7 @@ type IMSJoinConversationReq struct {
 
 // IMSLeaveConversationReq 离开会话请求参数
 type IMSLeaveConversationReq struct {
+	ReqHeader
 	ConversationIDs []string `json:"conversation_ids,omitempty"`
 	UserID          string   `json:"user_id"`
 	ClientType      int32    `json:"client_type,omitempty"` // 用户客户端类型
@@ -145,6 +154,7 @@ type IMSLeaveConversationReq struct {
 
 // IMSUpdateConvUserDataReq 更新用户在会话中的属性请求参数
 type IMSUpdateConvUserDataReq struct {
+	ReqHeader
 	ConversationID string            `json:"conversation_id,omitempty"` // 会话 ID
 	UserID         string            `json:"user_id"`                   // 用户 ID
 	Option         int64             `json:"option,omitempty"`          // 用户在会话中的选项参数
@@ -154,10 +164,16 @@ type IMSUpdateConvUserDataReq struct {
 
 // IMSConversationUserListReq 获取用户会话列表请求参数
 type IMSConversationUserListReq struct {
+	ReqHeader
 	UserID string `json:"user_id"` // 用户 ID
 }
 
 // IMSChannelUsesCountReq 获取频道玩家数量
 type IMSChannelUsesCountReq struct {
 	ConversationIDs []string `json:"conversation_ids"`
+}
+
+type ReqIMSChannelUsersCount struct {
+	ReqHeader
+	ChannelConvIds []string
 }

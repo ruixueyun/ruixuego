@@ -98,6 +98,7 @@ type RankMember struct {
 
 // ReportCustomAction 投放归因上报自定义action
 type ReportCustomAction struct {
+	ReqHeader
 	OpenID string `json:"open_id"`
 	Action string `json:"action"` // 上报行为
 }

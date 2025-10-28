@@ -19,7 +19,7 @@ const (
 )
 
 const (
-	typeTrack   = "track"
+	typeTrack   = "Track"
 	typeUser    = "user"
 	UserSet     = "user_set"
 	UserSetOnce = "user_setonce"
@@ -42,4 +42,8 @@ type BigDataLog struct {
 	SubChannelID string                 `json:"sub_channel_id,omitempty"`
 	CPID         uint32                 `json:"cpid"`
 	PlatformID   int32                  `json:"platform_id"`
+}
+
+type TrackInterface interface {
+	Track(track *ReqTrack) (int, error)
 }

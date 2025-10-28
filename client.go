@@ -59,7 +59,7 @@ const (
 	apiRankDetail            = "/v1/social/serverapi/rankdetail"
 	apiAllRankIDList         = "/v1/social/serverapi/getallranklist"
 
-	apiBigDataTrack = "/v1/data/api/track"
+	apiBigDataTrack = "/v1/data/api/Track"
 
 	apiIMSLogin                      = "/v1/ims/server/login"
 	apiIMSSendMessage                = "/v1/ims/server/sendmessage"
@@ -686,16 +686,16 @@ func (c *Client) Tracks(
 	return c.producer.Tracks(devicecode, distinctID, opts...)
 }
 
-// track 将埋点数据上报给瑞雪云
-func (c *Client) track(data []byte, logCount int, compress bool) (int, error) {
-	if len(data) == 0 {
+// Track 将埋点数据上报给瑞雪云
+func (c *Client) Track(track *ReqTrack) (int, error) {
+	if len(track.Data) == 0 {
 		return defaultStatus, nil
 	}
 
 	traceID, req := c.getRequest(true)
 	ret := &response{}
-	req.Header.Add(headerDataCount, Itoa(logCount))
-	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, data, ret, compress)
+	req.Header.Add(headerDataCount, Itoa(track.LogCount))
+	code, err := c.queryCode(apiBigDataTrack, req, config.TrackTimeout, track.Data, ret, track.Compress)
 	if err != nil {
 		return code, errWithTraceID(err, traceID)
 	}

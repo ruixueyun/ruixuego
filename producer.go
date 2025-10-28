@@ -11,10 +11,10 @@ import (
 
 type BigdataOptions func(p *BigDataLog) error
 
-func NewProducer(c *Client, conf *BigDataConfig) (*Producer, error) {
+func NewProducer(t TrackInterface, conf *BigDataConfig) (*Producer, error) {
 	conf.done()
 
-	w := newBatchWriter(c, conf)
+	w := newBatchWriter(t, conf)
 	err := w.Init()
 	if err != nil {
 		return nil, err
