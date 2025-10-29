@@ -1709,20 +1709,16 @@ func (c *Client) ExtensionExchange(arg *ExtensionExchangeReq) ([]*ExtensionProp,
 	}
 	data := []*ExtensionProp{}
 	resp := &response{
-		Data: data,
+		Data: &data,
 	}
 	err := c.queryAndCheckResponse(apiOperationToolsExtensionExchange, &arg.ReqHeader, arg, resp)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(resp.Code, resp.Msg)
 	if resp.Code != 0 {
 		return nil, fmt.Errorf(resp.Msg)
 	}
-	if resp.Data == nil {
-		return nil, nil
-	}
-	return resp.Data.([]*ExtensionProp), nil
+	return data, nil
 }
 
 // ExtensionGameDisplay 主播获取游戏内显示码
