@@ -22,10 +22,11 @@ type PusherPushReqInfo struct {
 }
 
 type PusherPushReqTarget struct {
-	Type   uint8    `json:"type"`
-	Openid []string `json:"openid"`
-	Tag    string   `json:"tag"`
-	Alias  []string `json:"alias"`
+	Type     uint8    `json:"type"`
+	Openid   []string `json:"openid"`
+	CPUserID []string `json:"cp_user_id"`
+	Tag      string   `json:"tag"`
+	Alias    []string `json:"alias"`
 }
 
 type ReqPusher struct {
