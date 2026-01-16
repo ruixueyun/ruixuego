@@ -75,3 +75,35 @@ func gZIPUncompress(b []byte) ([]byte, error) {
 	}
 	return ret, nil
 }
+
+// GzipCompressV2 对输入数据进行 gzip 压缩。
+func GzipCompressV2(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	writer, err := gzip.NewWriterLevel(&buf, gzip.BestCompression)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := writer.Write(data); err != nil {
+		_ = writer.Close()
+		return nil, err
+	}
+	if err := writer.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// GzipDecompressV2 对 gzip 压缩数据进行解压。
+func GzipDecompressV2(data []byte) ([]byte, error) {
+	reader, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, reader); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}

@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/ruixueyun/ruixuego/bufferpool"
 	"github.com/valyala/fasthttp"
 )
 
@@ -245,14 +244,12 @@ func (c *Client) queryCode(
 			}
 		}
 		if len(compress) == 1 && compress[0] {
-			buf, err := gZIPCompress(b)
+			buf, err := GzipCompressV2(b)
 			if err != nil {
-				bufferpool.Put(buf)
 				return code, err
 			}
 			req.Header.Set("content-encoding", "gzip")
-			req.SetBody(buf.Bytes())
-			bufferpool.Put(buf)
+			req.SetBody(buf)
 		} else {
 			req.SetBody(b)
 		}
