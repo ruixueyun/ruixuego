@@ -19,7 +19,7 @@ const (
 )
 
 const (
-	typeTrack   = "Track"
+	typeTrack   = "track"
 	typeUser    = "user"
 	UserSet     = "user_set"
 	UserSetOnce = "user_setonce"
