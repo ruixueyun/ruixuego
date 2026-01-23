@@ -19,13 +19,15 @@ const (
 )
 
 const (
-	typeTrack   = "track"
-	typeUser    = "user"
-	UserSet     = "user_set"
-	UserSetOnce = "user_setonce"
-	UserAdd     = "user_add"
-	UserMin     = "user_min"
-	UserMax     = "user_max"
+	typeTrack       = "track"
+	typeUpdateTrack = "update_track"
+	typeFirstTrack  = "first_track"
+	typeUser        = "user"
+	UserSet         = "user_set"
+	UserSetOnce     = "user_setonce"
+	UserAdd         = "user_add"
+	UserMin         = "user_min"
+	UserMax         = "user_max"
 )
 
 type BigDataLog struct {

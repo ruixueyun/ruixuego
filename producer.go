@@ -80,6 +80,30 @@ func SetEvent(event string) BigdataOptions {
 	}
 }
 
+// SetUpdateEvent 可更新事件名
+func SetUpdateEvent(event string) BigdataOptions {
+	return func(logData *BigDataLog) error {
+		if event == "" {
+			return ErrInvalidEvent
+		}
+		logData.Type = typeUpdateTrack
+		logData.Event = event
+		return nil
+	}
+}
+
+// SetFirstEvent 首次事件名
+func SetFirstEvent(event string) BigdataOptions {
+	return func(logData *BigDataLog) error {
+		if event == "" {
+			return ErrInvalidEvent
+		}
+		logData.Type = typeFirstTrack
+		logData.Event = event
+		return nil
+	}
+}
+
 // SetUserUpdateType 用户更新类型：user_setonce,user_set
 func SetUserUpdateType(updateType string) BigdataOptions {
 	return func(p *BigDataLog) error {
